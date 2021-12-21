@@ -28,6 +28,7 @@
 -define:PLATFORM_ARCH_64
 -define:UNITY_64
 -define:UNITY_INCLUDE_TESTS
+-define:UNITY_ANALYTICS
 -define:USE_SEARCH_ENGINE_API
 -define:USE_SEARCH_TABLE
 -define:USE_SEARCH_MODULE
@@ -359,9 +360,6 @@
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEditor.SpatialTracking.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEditor.XR.LegacyInputHelpers.ref.dll"
--r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEngine.Advertisements.Editor.ref.dll"
--r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEngine.Advertisements.ref.dll"
--r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEngine.Monetization.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEngine.SpatialTracking.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEngine.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEngine.XR.LegacyInputHelpers.ref.dll"
