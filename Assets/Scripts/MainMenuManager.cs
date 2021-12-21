@@ -56,6 +56,7 @@ public class MainMenuManager : MonoBehaviour
     {
         foreach (Steamworks.Friend friend in friends)
         {
+            //if(friend.Name == "NooNitron")
             if(friend.IsPlayingThisGame)
             {
                 if (GUILayout.Button(friend.Name))
@@ -64,6 +65,12 @@ public class MainMenuManager : MonoBehaviour
                 }
             }
         }
+
+        if (GUILayout.Button("me"))
+        {
+            SteamManager.instance.ConnectToGame(Steamworks.SteamClient.SteamId);
+        }
+
         if (SteamManager.instance.Connected == true) MyMainMenu = MenuState.ConnectedToHost;
     }
 
@@ -71,22 +78,32 @@ public class MainMenuManager : MonoBehaviour
     {
         if (GUILayout.Button("Play"))
         {
-            SceneManager.LoadScene(1);
-            NetworkManager.instance.StartCoroutine();
+            if (!SteamManager.instance.Connected)
+            {
+                EventsTransport dataMessage = new EventsTransport("StartGame");
+                dataMessage.SendEventToClients();
+            }
+
+            NetworkManager.StartGame();
         }
 
-        List<Steamworks.Data.Connection> list = System.Linq.Enumerable.ToList(SteamManager.instance.server.Connected);
-        for (int i = 0; i < list.Count; i++)
+        List<PlayerData> players = NetworkManager.Players;
+        for (int i = 0; i < players.Count; i++)
         {
-            //GUILayout.Label(list[i].Id.ToString());
-            GUILayout.Label(list[i].DetailedStatus());
+            GUILayout.Box(players[i].Name);
         }
     }
 
     void ConnectedToHost()
     {
         //test
-        Debug.Log("wait for play");
+        GUILayout.Box("wait for play");
+
+        List<PlayerData> players = NetworkManager.Players;
+        for (int i = 0; i < players.Count; i++)
+        {
+            GUILayout.Box(players[i].Name);
+        }
     }
 
     enum MenuState

@@ -2,15 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Player
+public class Player : MonoBehaviour
 {
-    public string Name;
-    public ulong SteamID;
+    Vector3S Position;
+    new Rigidbody2D rigidbody;
+    EventsTransport PositionEvent;
 
-    public Player(string Name, ulong SteamID)
+    void Awake()
     {
-        this.Name = Name;
-        this.SteamID = SteamID;
+        rigidbody = gameObject.AddComponent<Rigidbody2D>();
+        rigidbody.gravityScale = 0;
+        
+        PositionEvent = new EventsTransport("PlayerPos_" + Steamworks.SteamClient.SteamId);
+    }
+
+    void FixedUpdate()
+    {
+        rigidbody.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * 10;
+        if(Position != gameObject.transform.position)
+        {
+            Position = gameObject.transform.position;
+            PositionEvent.Object = Position;
+            if(SteamManager.instance.host)
+                PositionEvent.SendEventToClients();
+            else PositionEvent.SendEventToServer();
+        }      
     }
 }

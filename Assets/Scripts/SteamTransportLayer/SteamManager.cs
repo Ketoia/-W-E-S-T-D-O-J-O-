@@ -16,6 +16,7 @@ public class SteamManager : MonoBehaviour
     public bool Connected = false;
 
     public static SteamManager instance;
+    public PlayerData MyPlayer;
 
     private void Awake()
     {
@@ -30,6 +31,8 @@ public class SteamManager : MonoBehaviour
 
         if (instance == null) instance = this;
         DontDestroyOnLoad(this);
+
+        MyPlayer = new PlayerData(SteamClient.Name, SteamClient.SteamId.Value);
     }
 
     void Update()

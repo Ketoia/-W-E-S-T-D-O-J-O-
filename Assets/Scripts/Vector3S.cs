@@ -49,7 +49,7 @@ public struct Vector3S
 
     public static bool operator !=(Vector3S a, Vector3S b)
     {
-        return a.x != b.x && a.y != b.y && a.z != b.z;
+        return a.x != b.x || a.y != b.y || a.z != b.z;
     }
 
     public static implicit operator Vector3(Vector3S x)
@@ -61,4 +61,14 @@ public struct Vector3S
     {
         return new Vector3S(x.x, x.y, x.z);
     }
+
+    public static bool operator ==(Vector3S a, Vector3 b)
+    {
+        return a.x == b.x && a.y == b.y && a.z == b.z;
+    }
+    public static bool operator !=(Vector3S a, Vector3 b)
+    {
+        return a.x != b.x || a.y != b.y || a.z != b.z;
+    }
+
 }
