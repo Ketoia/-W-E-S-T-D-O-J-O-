@@ -24,8 +24,8 @@ public class OtherPlayer : MonoBehaviour
         playerData = parameter;
         //initialise Listeners
         EventManager.StartListening("PlayerPos_" + playerData.SteamID.ToString(), SetPosition);
-        EventManager.StartListening("PlayerCurrentFrame_" + Steamworks.SteamClient.SteamId, SetAnimationState);
-        EventManager.StartListening("PlayerXFlip_" + Steamworks.SteamClient.SteamId, SetXFlip);
+        EventManager.StartListening("PlayerCurrentFrame_" + playerData.SteamID.ToString(), SetAnimationState);
+        EventManager.StartListening("PlayerXFlip_" + playerData.SteamID.ToString(), SetXFlip);
         EventManager.StartListening("TimeFrameRateTick", SetFrame);
 
         spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
