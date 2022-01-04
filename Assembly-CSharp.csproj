@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{87A16F52-0478-5C70-737F-058D88306DCF}</ProjectGuid>
+    <ProjectGuid>{0A6819D5-17F5-6D92-6891-39C8C7BBA30B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -59,14 +59,19 @@
     <Compile Include="Assets\Scripts\Vector3S.cs" />
     <Compile Include="Assets\Scripts\GameplayManager.cs" />
     <Compile Include="Assets\Scripts\NetworkManager.cs" />
+    <Compile Include="Assets\Mashins\Scripts\SetDoors.cs" />
+    <Compile Include="Assets\Mashins\Scripts\NewMapGenerator.cs" />
     <Compile Include="Assets\Scripts\SteamTransportLayer\IMyConnection.cs" />
+    <Compile Include="Assets\Mashins\Scripts\RoomSpec.cs" />
     <Compile Include="Assets\Scripts\SteamTransportLayer\SteamManager.cs" />
     <Compile Include="Assets\Scripts\AnimationEnums.cs" />
+    <Compile Include="Assets\Mashins\Scripts\MapGenerator.cs" />
     <Compile Include="Assets\Scripts\PlayerData.cs" />
     <Compile Include="Assets\Scripts\SteamTransportLayer\EventsTransport.cs" />
     <Compile Include="Assets\Scripts\OtherPlayer.cs" />
     <Compile Include="Assets\Scripts\MainMenuManager.cs" />
     <Compile Include="Assets\Scripts\SteamTransportLayer\EventManager.cs" />
+    <Compile Include="Assets\Mashins\Scripts\FindPath.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\SteamTransportLayer\IMySever.cs" />
   </ItemGroup>
