@@ -26,7 +26,7 @@ public class EventsTransport
     {
         //serialise
         Byte[] bytes;
-        BinaryFormatter bf = new BinaryFormatter();
+        BinaryFormatter bf = new();
         using (var ms = new MemoryStream())
         {
             bf.Serialize(ms, this);
@@ -40,7 +40,7 @@ public class EventsTransport
     {
         //serialise
         Byte[] bytes;
-        BinaryFormatter bf = new BinaryFormatter();
+        BinaryFormatter bf = new();
         using (var ms = new MemoryStream())
         {
             bf.Serialize(ms, this);
@@ -58,12 +58,19 @@ public class EventsTransport
         if (SteamManager.instance.host) return;
         //serialise
         Byte[] bytes;
-        BinaryFormatter bf = new BinaryFormatter();
+        BinaryFormatter bf = new();
         using (var ms = new MemoryStream())
         {
             bf.Serialize(ms, this);
             bytes = ms.ToArray();
         }
         SteamManager.instance.connection.Connection.SendMessage(bytes);
+    }
+
+    public void AutomaticEventSend()
+    {
+        if (SteamManager.instance.host)
+            SendEventToClients();
+        else SendEventToServer();
     }
 }

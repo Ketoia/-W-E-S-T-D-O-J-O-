@@ -9,12 +9,12 @@ public class NetworkManager : MonoBehaviour
     public GameObject PlayerPrefab;
 
     [HideInInspector]
-    public static List<PlayerData> Players = new List<PlayerData>();
-    public List<GameObject> PlayersGameObjects = new List<GameObject>();
+    public static List<PlayerData> Players = new();
+    public List<GameObject> PlayersGameObjects = new();
 
     public static NetworkManager instance;
 
-    public Sprite sprite;
+    public List<Sprite> sprites;
     private void Start()
     {
         instance = this;
@@ -32,8 +32,8 @@ public class NetworkManager : MonoBehaviour
         PlayersGameObjects.Add(Instantiate(PlayerPrefab));
         for (int i = 0; i < Players.Count; i++)
         {
-            GameObject player = new GameObject(Players[i].Name);
-            player.AddComponent<OtherPlayer>().InitialGameObject(Players[i], sprite);
+            GameObject player = new(Players[i].Name);
+            player.AddComponent<OtherPlayer>().InitialGameObject(Players[i], sprites);
             PlayersGameObjects.Add(player);
         }
     }

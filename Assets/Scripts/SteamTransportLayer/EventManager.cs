@@ -8,8 +8,8 @@ public class EventManager : MonoBehaviour
     [System.Serializable]
     private class MyEvent<T> : UnityEvent<T> { }
 
-    private static Dictionary<string, MyEvent<object>> eventDictionaryWithParameters = new Dictionary<string, MyEvent<object>>();
-    private static Dictionary<string, UnityEvent> eventDictionary = new Dictionary<string, UnityEvent>();
+    private static Dictionary<string, MyEvent<object>> eventDictionaryWithParameters = new();
+    private static Dictionary<string, UnityEvent> eventDictionary = new();
 
     public static void StartListening(string eventName, UnityAction<object> listener)
     {
@@ -55,15 +55,17 @@ public class EventManager : MonoBehaviour
 
     public static void TriggerEvent(string eventName, object obj)
     {
-        if (eventDictionaryWithParameters.TryGetValue(eventName, out MyEvent<object> thisEvent))
+        if (eventDictionaryWithParameters.ContainsKey(eventName)) 
         {
+            eventDictionaryWithParameters.TryGetValue(eventName, out MyEvent<object> thisEvent);
             thisEvent.Invoke(obj);
         }
     }
     public static void TriggerEvent(string eventName)
     {
-        if (eventDictionary.TryGetValue(eventName, out UnityEvent thisEvent))
+        if (eventDictionary.ContainsKey(eventName))
         {
+            eventDictionary.TryGetValue(eventName, out UnityEvent thisEvent);
             thisEvent.Invoke();
         }
     }

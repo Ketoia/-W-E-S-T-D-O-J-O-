@@ -21,7 +21,7 @@ public class IMySever : ISocketManager
 		Debug.Log($"{data.Identity.SteamId} has joined the game");
 
 		//ToDo
-		EventsTransport dataMessage = new EventsTransport("AddPlayer", SteamManager.instance.MyPlayer);
+		EventsTransport dataMessage = new("AddPlayer", SteamManager.instance.MyPlayer);
 		dataMessage.SendEventToClients();
 
 	}

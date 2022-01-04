@@ -18,7 +18,7 @@ public class IMyConnection : IConnectionManager
 	public void OnConnected(ConnectionInfo data)
 	{
 		SteamManager.instance.Connected = true;
-		EventsTransport dataMessage = new EventsTransport("AddPlayer", SteamManager.instance.MyPlayer);
+		EventsTransport dataMessage = new("AddPlayer", SteamManager.instance.MyPlayer);
 		dataMessage.SendEventToServer();
 
 		Debug.Log($"{data.Identity.SteamId} has joined the game");
@@ -37,11 +37,10 @@ public class IMyConnection : IConnectionManager
 		Marshal.Copy(data, managedArray, 0, size);
 
 		//deserialise data
-		using var memStream = new MemoryStream();
-		var binForm = new BinaryFormatter();
+		MemoryStream memStream = new();
 		memStream.Write(managedArray, 0, managedArray.Length);
 		memStream.Seek(0, SeekOrigin.Begin);
-		EventsTransport obj = binForm.Deserialize(memStream) as EventsTransport;
+		EventsTransport obj = new BinaryFormatter().Deserialize(memStream) as EventsTransport;
 
 		if (obj.Object == null)
 			EventManager.TriggerEvent(obj.Key);

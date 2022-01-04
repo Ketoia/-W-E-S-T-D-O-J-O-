@@ -5,8 +5,8 @@ using UnityEngine.Events;
 
 public class SteamManager : MonoBehaviour
 {
-    IMySever MyServerInterface = new IMySever();
-    IMyConnection MyConnectionInterface = new IMyConnection();
+    IMySever MyServerInterface = new();
+    IMyConnection MyConnectionInterface = new();
     public SocketManager server;
     public ConnectionManager connection;
 

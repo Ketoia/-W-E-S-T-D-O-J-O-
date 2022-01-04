@@ -6,18 +6,31 @@ public class OtherPlayer : MonoBehaviour
 {
     protected GameObject PlayersText;
     PlayerData playerData;
+    public List<Sprite> PlayerSprite;
+    SpriteRenderer spriteRenderer;
 
-    AnimationMainState AnimationSate = AnimationMainState.Stay;
+    //animations
+    public int AnimationLength = 4;
 
-    public void InitialGameObject(PlayerData parameter, Sprite sprite)
+    //variables to sync
+    bool IsAtacking = false;
+    bool IsDead = false;
+    bool IsJumping = false;
+    int CurrentFrame = 0;
+
+
+    public void InitialGameObject(PlayerData parameter, List<Sprite> sprites)
     {
         playerData = parameter;
         //initialise Listeners
         EventManager.StartListening("PlayerPos_" + playerData.SteamID.ToString(), SetPosition);
-        EventManager.StartListening("PlayerMainAnimation_" + playerData.SteamID.ToString(), SetAnimationMainState);
+        EventManager.StartListening("PlayerCurrentFrame_" + Steamworks.SteamClient.SteamId, SetAnimationState);
+        EventManager.StartListening("PlayerXFlip_" + Steamworks.SteamClient.SteamId, SetXFlip);
+        EventManager.StartListening("TimeFrameRateTick", SetFrame);
 
-
-        gameObject.AddComponent<SpriteRenderer>().sprite = sprite;
+        spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+        PlayerSprite = sprites;
+        spriteRenderer.sprite = sprites[0];
         
         //initialise Player's Names
         PlayersText = new GameObject("PlayersText", typeof(TextMesh));
@@ -36,12 +49,21 @@ public class OtherPlayer : MonoBehaviour
         transform.position = Position;
     }
 
-    void SetAnimationMainState(object AnimationEnum)
+    void SetXFlip(object Xflip)
     {
-        AnimationSate = (AnimationMainState)AnimationEnum;
+        spriteRenderer.flipX = (bool)Xflip;
+        SetFrame(GameplayManager.instance.TimeFrame);
     }
-    void SetAnimationMinorState(object AnimationEnum)
-    {
 
+    void SetAnimationState(object CurFramu)
+    {
+        CurrentFrame = (int)CurFramu;
+        SetFrame(GameplayManager.instance.TimeFrame);
+    }
+
+    void SetFrame(object obj)
+    {
+        int Framu = (int)obj;
+        spriteRenderer.sprite = PlayerSprite[CurrentFrame + (Framu % AnimationLength)];
     }
 }

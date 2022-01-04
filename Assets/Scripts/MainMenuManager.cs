@@ -80,7 +80,7 @@ public class MainMenuManager : MonoBehaviour
         {
             if (!SteamManager.instance.Connected)
             {
-                EventsTransport dataMessage = new EventsTransport("StartGame");
+                EventsTransport dataMessage = new ("StartGame");
                 dataMessage.SendEventToClients();
             }
 

@@ -2,8 +2,8 @@
 public enum AnimationMainState
 {
     Stay,
-    Walk,
     Attack,
+    Walk,
     Die,
     Vanish,
     Awake
