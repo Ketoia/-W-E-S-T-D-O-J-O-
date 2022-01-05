@@ -15,6 +15,8 @@ public class NetworkManager : MonoBehaviour
     public static NetworkManager instance;
 
     public List<Sprite> sprites;
+    public Material OutlineMat;
+
     private void Start()
     {
         instance = this;
@@ -33,7 +35,7 @@ public class NetworkManager : MonoBehaviour
         for (int i = 0; i < Players.Count; i++)
         {
             GameObject player = new(Players[i].Name);
-            player.AddComponent<OtherPlayer>().InitialGameObject(Players[i], sprites);
+            player.AddComponent<OtherPlayer>().InitialGameObject(Players[i], sprites, OutlineMat);
             PlayersGameObjects.Add(player);
         }
     }

@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     EventsTransport PositionEvent;
     SpriteRenderer spriteRenderer;
 
+    public Material PlayerOutline;
     //animations
     public int AnimationLength = 4;
 
@@ -34,6 +35,7 @@ public class Player : MonoBehaviour
     {
         spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = PlayerSprite[0];
+        spriteRenderer.material = PlayerOutline;
         rigidbody = gameObject.AddComponent<Rigidbody2D>();
         rigidbody.gravityScale = 0;
 

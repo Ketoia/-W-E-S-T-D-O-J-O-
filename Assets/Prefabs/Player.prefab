@@ -85,4 +85,5 @@ MonoBehaviour:
   - {fileID: -3551967274139903119, guid: 14e951b077191484b8406a6d84ae01d5, type: 3}
   - {fileID: 8113700493152974639, guid: 14e951b077191484b8406a6d84ae01d5, type: 3}
   - {fileID: 4819963251569588764, guid: 14e951b077191484b8406a6d84ae01d5, type: 3}
+  PlayerOutline: {fileID: 2100000, guid: 95ef671ef5ec65747aec859fb6b408d9, type: 2}
   AnimationLength: 4

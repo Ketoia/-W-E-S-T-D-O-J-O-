@@ -19,7 +19,7 @@ public class OtherPlayer : MonoBehaviour
     int CurrentFrame = 0;
 
 
-    public void InitialGameObject(PlayerData parameter, List<Sprite> sprites)
+    public void InitialGameObject(PlayerData parameter, List<Sprite> sprites, Material OutlineMat)
     {
         playerData = parameter;
         //initialise Listeners
@@ -31,7 +31,8 @@ public class OtherPlayer : MonoBehaviour
         spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         PlayerSprite = sprites;
         spriteRenderer.sprite = sprites[0];
-        
+        spriteRenderer.material = OutlineMat;
+
         //initialise Player's Names
         PlayersText = new GameObject("PlayersText", typeof(TextMesh));
         PlayersText.transform.parent = transform;
