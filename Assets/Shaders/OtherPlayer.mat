@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Player 1
-  m_Shader: {fileID: -6465566751694194690, guid: 988bc2ff3dd78c74e88a6bd899ba1777, type: 3}
+  m_Name: OtherPlayer
+  m_Shader: {fileID: -6465566751694194690, guid: 939940742564c25408d14ec7404d8827, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -50,13 +50,13 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
-    - _OutlineSize: 0.002
+    - _OutlineSize: 0.0025
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _OutlineColor: {r: 0.3066038, g: 0.9180817, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5377358, g: 0, b: 0, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6534807120739300614
