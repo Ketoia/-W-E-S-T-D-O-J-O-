@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         rigidbody.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * 10;
-        rigidbody.velocity = dir * 10;
+        rigidbody.velocity = dir * 5;
         UpdateDirection();
         if (Position != gameObject.transform.position)
         {
@@ -63,45 +63,49 @@ public class Player : MonoBehaviour
     {
         dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
-        if (dir.x != 0 || dir.y != 0)
-        {
-            if (dir.x > 0 && dir.y <= 0)
-            {
-                XFlip = false;
-                Direction = 0;
-            }
-            else if (dir.x > 0 && dir.y > 0)
-            {
-                XFlip = false;
-                Direction = 1;
-            }
-            else if (dir.x <= 0 && dir.y > 0)
-            {
-                XFlip = true;
-                Direction = 1;
-            }
-            else
-            {
-                XFlip = true;                                
-                Direction = 0;
-            }
-
-            UpdateXFlip();
-
-            if (animationMainState != AnimationMainState.Walk)
-            {
-                animationMainState = AnimationMainState.Walk;
-                UpdateAnimationState();
-            }
-        }
-        else
+        if (dir.x == 0 && dir.y == 0) //Stay
         {
             if (animationMainState != AnimationMainState.Stay)
             {
                 animationMainState = AnimationMainState.Stay;
                 UpdateAnimationState();
             }
+        }
+        else
+        {
+            if (animationMainState != AnimationMainState.Walk)
+            {
+                animationMainState = AnimationMainState.Walk;
+                UpdateAnimationState();
+            }
 
+            if (dir.x > 0) //Right
+            {
+                XFlip = false;
+                UpdateXFlip();
+            }
+            else if (dir.x < 0) //Left
+            {
+                XFlip = true;
+                UpdateXFlip();
+            }
+
+            if (dir.y > 0) //Up
+            {
+                if(Direction != 1)
+                {
+                    Direction = 1;
+                    UpdateAnimationState();
+                }
+            }
+            else if (dir.y < 0) //Down
+            {
+                if (Direction != 0)
+                {
+                    Direction = 0;
+                    UpdateAnimationState();
+                }
+            }
         }
     }
 
@@ -109,13 +113,10 @@ public class Player : MonoBehaviour
 
     void UpdateXFlip()
     {
-        if (XFlip != spriteRenderer.flipX)
-        {
-            spriteRenderer.flipX = XFlip;
-            PlayerAnimationsXFlip.Object = XFlip;
-            PlayerAnimationsXFlip.AutomaticEventSend();
-            UpdateAnimationState();
-        }
+        spriteRenderer.flipX = XFlip;
+        PlayerAnimationsXFlip.Object = XFlip;
+        PlayerAnimationsXFlip.AutomaticEventSend();
+        UpdateAnimationState();        
     }
 
     void UpdateAnimationState()
