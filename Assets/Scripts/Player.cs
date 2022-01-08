@@ -46,11 +46,32 @@ public class Player : MonoBehaviour
         EventManager.StartListening("TimeFrameRateTick", UpdateFrame);
     }
 
+    private void Update()
+    {
+        //CheckAttack
+        if(Input.GetMouseButtonDown(0) && !IsAtacking)
+        {
+            IsAtacking = true;
+        }
+    }
+
     void FixedUpdate()
     {
-        rigidbody.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized * 10;
-        rigidbody.velocity = dir * 5;
         UpdateDirection();
+        UpdateAttack();
+        UpdateMovement();
+    }
+
+    void UpdateAttack()
+    {
+
+    }
+
+    void UpdateMovement()
+    {
+        if (IsAtacking) return;
+        rigidbody.velocity = dir * 5;
+
         if (Position != gameObject.transform.position)
         {
             Position = gameObject.transform.position;
@@ -59,7 +80,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void UpdateDirection()
+    void UpdateDirection()
     {
         dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
@@ -113,6 +134,7 @@ public class Player : MonoBehaviour
 
     void UpdateXFlip()
     {
+        if (spriteRenderer.flipX == XFlip) return;
         spriteRenderer.flipX = XFlip;
         PlayerAnimationsXFlip.Object = XFlip;
         PlayerAnimationsXFlip.AutomaticEventSend();

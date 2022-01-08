@@ -13,9 +13,7 @@ public class OtherPlayer : MonoBehaviour
     public int AnimationLength = 4;
 
     //variables to sync
-    bool IsAtacking = false;
     bool IsDead = false;
-    bool IsJumping = false;
     int CurrentFrame = 0;
 
 
