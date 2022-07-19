@@ -75,6 +75,7 @@ public class NewMapGenerator : MonoBehaviour
         for (int i = 0; i < test.Count; i++)
         {
             Debug.Log(test[i].leftNeighbour + " " + test[i].rightNeighbour + " " + test[i].upNeighbour + " " + test[i].downNeighbour);
+            //Debug.Log(test[i].x + " " + test[i].y);
         }
         //Debug.Log(roomSettings.GetRooms(grid, tilemapBase, allRoomTiles).Count);
         //List<Vector2> test = roomSettings.CorrectGrid(grid, tilemapBase);

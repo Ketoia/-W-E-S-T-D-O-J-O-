@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-[CreateAssetMenu(fileName = "New Room", menuName = "Rooms")]
+//[CreateAssetMenu(fileName = "New Room", menuName = "Rooms")]
 public class RoomSpec : ScriptableObject
 {
     public string roomName;

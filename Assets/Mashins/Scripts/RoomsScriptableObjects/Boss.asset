@@ -15,5 +15,5 @@ MonoBehaviour:
   roomName: Boss
   roomPrefab: {fileID: 4542526571659189239, guid: 80c01a2858df9b040acb691ba5e28399, type: 3}
   roomTile: {fileID: 11400000, guid: 7256f8006e9908940a80169f46ffbb03, type: 2}
-  roomDistant: 6
-  roomAmount: 2
+  roomDistant: 3
+  roomAmount: 1
