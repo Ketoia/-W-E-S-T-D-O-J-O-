@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-[Serializable]
+//[Serializable]
 public struct Vector3S
 {
     public float x;

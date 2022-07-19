@@ -1,22 +1,13 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Steamworks;
 using UnityEngine.Events;
-
+using MyData;
 public class SteamManager : MonoBehaviour
 {
-    IMySever MyServerInterface = new();
-    IMyConnection MyConnectionInterface = new();
-    public SocketManager server;
-    public ConnectionManager connection;
-
-    [HideInInspector]
-    public bool host = false;
-    [HideInInspector]
-    public bool Connected = false;
-
     public static SteamManager instance;
-    public PlayerData MyPlayer;
+    public SyncDataPlayerData MyPlayer;
 
     private void Awake()
     {
@@ -32,41 +23,13 @@ public class SteamManager : MonoBehaviour
         if (instance == null) instance = this;
         DontDestroyOnLoad(this);
 
-        MyPlayer = new PlayerData(SteamClient.Name, SteamClient.SteamId.Value);
-    }
-
-    void Update()
-    {
-        if (host)
-        {
-            server.Receive();
-        }
-
-        if (Connected) 
-        {
-            connection.Receive();
-        }
-
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            ConnectToGame(SteamClient.SteamId);
-        }
+        MyPlayer = new SyncDataPlayerData();
+        MyPlayer.Name = SteamClient.Name;
+        MyPlayer.SteamID = SteamClient.SteamId;
     }
 
     private void OnDestroy()
     {
-        if(host) server.Close();
         SteamClient.Shutdown();
-    }
-
-    public void HostGame()
-    {
-        server = SteamNetworkingSockets.CreateRelaySocket(0, MyServerInterface);
-        host = true;
-    }
-
-    public void ConnectToGame(SteamId steamId)
-    {
-        connection = SteamNetworkingSockets.ConnectRelay(steamId, 0, MyConnectionInterface);
     }
 }

@@ -1,0 +1,2 @@
+cd C:\Users\kabug\Desktop\[ W E S T D O J O ]
+zfc.exe -i "Assembly-CSharp.csproj" -s -o "Assets\Scripts\ZeroFormatter"

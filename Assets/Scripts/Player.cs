@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     public int AnimationLength = 4;
 
     AnimationMainState animationMainState = AnimationMainState.Stay;
-    AnimationMinorState MinorAttack = AnimationMinorState.Pre;
+    AnimationMinorState animationAttackState = AnimationMinorState.Pre;
 
     EventsTransport PlayerCurrentFrame;
     EventsTransport PlayerAnimationsXFlip;
@@ -27,8 +27,8 @@ public class Player : MonoBehaviour
     //variables to sync
     bool XFlip = false;
     bool IsAtacking = false;
-    bool IsDead = false;
-    bool IsJumping = false;
+    //bool IsDead = false;
+    //bool IsJumping = false;
     int CurrentFrame = 0;
 
     void Awake()
@@ -39,93 +39,147 @@ public class Player : MonoBehaviour
         rigidbody = gameObject.AddComponent<Rigidbody2D>();
         rigidbody.gravityScale = 0;
 
-        PositionEvent = new EventsTransport("PlayerPos_" + Steamworks.SteamClient.SteamId);
-        PlayerCurrentFrame = new EventsTransport("PlayerCurrentFrame_" + Steamworks.SteamClient.SteamId);
-        PlayerAnimationsXFlip = new EventsTransport("PlayerXFlip_" + Steamworks.SteamClient.SteamId);
+        //PositionEvent = new EventsTransport("PlayerPos_" + Steamworks.SteamClient.SteamId);
+        //PlayerCurrentFrame = new EventsTransport("PlayerCurrentFrame_" + Steamworks.SteamClient.SteamId);
+        //PlayerAnimationsXFlip = new EventsTransport("PlayerXFlip_" + Steamworks.SteamClient.SteamId);
 
-        EventManager.StartListening("TimeFrameRateTick", UpdateFrame);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid(2), UpdateFrame);
     }
 
     private void Update()
     {
+        MovementFSM();
+    }
+
+    void MovementFSM()
+    {
+        if (IsAtacking) return;
+        dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+
         //CheckAttack
-        if(Input.GetMouseButtonDown(0) && !IsAtacking)
+        if(dir == Vector2.zero)
         {
-            IsAtacking = true;
+            ChangeAnimationState(AnimationMainState.Stay);
         }
+        else
+        {
+            ChangeAnimationState(AnimationMainState.Walk);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                IsAtacking = true;
+                ChangeAnimationState(AnimationMainState.Attack);
+            }
+        }
+
     }
 
     void FixedUpdate()
     {
-        UpdateDirection();
-        UpdateAttack();
-        UpdateMovement();
+        UpdateMovementFSM();
     }
 
+    void UpdateMovementFSM()
+    {
+        switch(animationMainState)
+        {
+            case AnimationMainState.Stay:
+                rigidbody.velocity = Vector2.zero;
+                break;
+
+            case AnimationMainState.Walk:
+                UpdateDirection();
+                UpdateMovement();
+                break;
+
+            case AnimationMainState.Attack:
+                UpdateAttack();
+                break;
+
+            case AnimationMainState.Die:
+
+                break;
+        }
+    }
+
+    #region Attack
     void UpdateAttack()
     {
+        switch (animationAttackState)
+        {
+            case AnimationMinorState.Pre:
+                animationAttackState = AnimationMinorState.Curr;
+                break;
 
+            case AnimationMinorState.Curr:
+                CurrAttack();
+                break;
+
+            case AnimationMinorState.Post:
+                animationAttackState = AnimationMinorState.Pre;
+                ChangeAnimationState(AnimationMainState.Stay);
+                IsAtacking = false;
+                break;
+        }
     }
+
+    float time = 2;
+    float dtime = 0;
+
+    void CurrAttack()
+    {
+        if (dtime > time)
+        {
+            animationAttackState = AnimationMinorState.Post;
+            dtime = 0;
+        }
+        else
+        {
+            UpdateMovement();
+            dtime += Time.deltaTime;
+        }
+    }
+    #endregion
+
 
     void UpdateMovement()
     {
-        if (IsAtacking) return;
         rigidbody.velocity = dir * 5;
 
         if (Position != gameObject.transform.position)
         {
             Position = gameObject.transform.position;
-            PositionEvent.Object = Position;
-            PositionEvent.AutomaticEventSend();
+            PositionEvent.Value = Position;
         }
     }
 
     void UpdateDirection()
     {
-        dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
-
-        if (dir.x == 0 && dir.y == 0) //Stay
+        if (dir.x > 0) //Right
         {
-            if (animationMainState != AnimationMainState.Stay)
+            XFlip = false;
+            UpdateXFlip();
+        }
+        else if (dir.x < 0) //Left
+        {
+            XFlip = true;
+            UpdateXFlip();
+        }
+
+        if (dir.y > 0) //Up
+        {
+            if (Direction != 1)
             {
-                animationMainState = AnimationMainState.Stay;
+                Direction = 1;
                 UpdateAnimationState();
             }
         }
-        else
+        else if (dir.y < 0) //Down
         {
-            if (animationMainState != AnimationMainState.Walk)
+            if (Direction != 0)
             {
-                animationMainState = AnimationMainState.Walk;
+                Direction = 0;
                 UpdateAnimationState();
-            }
-
-            if (dir.x > 0) //Right
-            {
-                XFlip = false;
-                UpdateXFlip();
-            }
-            else if (dir.x < 0) //Left
-            {
-                XFlip = true;
-                UpdateXFlip();
-            }
-
-            if (dir.y > 0) //Up
-            {
-                if(Direction != 1)
-                {
-                    Direction = 1;
-                    UpdateAnimationState();
-                }
-            }
-            else if (dir.y < 0) //Down
-            {
-                if (Direction != 0)
-                {
-                    Direction = 0;
-                    UpdateAnimationState();
-                }
             }
         }
     }
@@ -136,9 +190,17 @@ public class Player : MonoBehaviour
     {
         if (spriteRenderer.flipX == XFlip) return;
         spriteRenderer.flipX = XFlip;
-        PlayerAnimationsXFlip.Object = XFlip;
-        PlayerAnimationsXFlip.AutomaticEventSend();
+        //PlayerAnimationsXFlip.Value = XFlip;
         UpdateAnimationState();        
+    }
+    
+    void ChangeAnimationState(AnimationMainState state)
+    {
+        if (animationMainState != state)
+        {
+            animationMainState = state;
+            UpdateAnimationState();
+        }
     }
 
     void UpdateAnimationState()
@@ -146,8 +208,7 @@ public class Player : MonoBehaviour
         CurrentFrame = Direction * AnimationLength + (int)animationMainState * AnimationLength * 2;
         UpdateFrame(GameplayManager.instance.TimeFrame);
 
-        PlayerCurrentFrame.Object = CurrentFrame;
-        PlayerCurrentFrame.AutomaticEventSend();
+        //PlayerCurrentFrame.Value = CurrentFrame;
     }
 
     void UpdateFrame(object obj)

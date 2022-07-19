@@ -1,17 +1,17 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class EventManager : MonoBehaviour
 {
-    [System.Serializable]
     private class MyEvent<T> : UnityEvent<T> { }
 
-    private static Dictionary<string, MyEvent<object>> eventDictionaryWithParameters = new();
-    private static Dictionary<string, UnityEvent> eventDictionary = new();
+    private static Dictionary<Guid, MyEvent<object>> eventDictionaryWithParameters = new();
+    private static Dictionary<Guid, UnityEvent> eventDictionary = new();
 
-    public static void StartListening(string eventName, UnityAction<object> listener)
+    public static void StartListening(Guid eventName, UnityAction<object> listener)
     {
         if (eventDictionaryWithParameters.TryGetValue(eventName, out MyEvent<object> thisEvent))
         {
@@ -24,7 +24,7 @@ public class EventManager : MonoBehaviour
             eventDictionaryWithParameters.Add(eventName, thisEvent);
         }
     }
-    public static void StartListening(string eventName, UnityAction listener)
+    public static void StartListening(Guid eventName, UnityAction listener)
     {
         if (eventDictionary.TryGetValue(eventName, out UnityEvent thisEvent))
         {
@@ -38,14 +38,14 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void StopListening(string eventName, UnityAction<object> listener)
+    public static void StopListening(Guid eventName, UnityAction<object> listener)
     {
         if (eventDictionaryWithParameters.TryGetValue(eventName, out MyEvent<object> thisEvent))
         {
             thisEvent.RemoveListener(listener);
         }
     }
-    public static void StopListening(string eventName, UnityAction listener)
+    public static void StopListening(Guid eventName, UnityAction listener)
     {
         if (eventDictionary.TryGetValue(eventName, out UnityEvent thisEvent))
         {
@@ -53,7 +53,7 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void TriggerEvent(string eventName, object obj)
+    public static void TriggerEvent(Guid eventName, object obj)
     {
         if (eventDictionaryWithParameters.ContainsKey(eventName)) 
         {
@@ -61,7 +61,7 @@ public class EventManager : MonoBehaviour
             thisEvent.Invoke(obj);
         }
     }
-    public static void TriggerEvent(string eventName)
+    public static void TriggerEvent(Guid eventName)
     {
         if (eventDictionary.ContainsKey(eventName))
         {

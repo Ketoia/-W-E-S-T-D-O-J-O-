@@ -1,4 +1,4 @@
-[System.Serializable]
+
 public enum AnimationMainState
 {
     Stay,
@@ -9,7 +9,6 @@ public enum AnimationMainState
     Awake
 }
 
-[System.Serializable]
 public enum AnimationMinorState
 {
     Pre,

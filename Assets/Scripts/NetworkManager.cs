@@ -1,15 +1,16 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using MyData;
 
-[DisallowMultipleComponent]
 public class NetworkManager : MonoBehaviour
 {
     public GameObject PlayerPrefab;
 
     [HideInInspector]
-    public static List<PlayerData> Players = new();
+    public static List<SyncDataPlayerData> Players = new();
     public List<GameObject> PlayersGameObjects = new();
 
     public static NetworkManager instance;
@@ -20,17 +21,20 @@ public class NetworkManager : MonoBehaviour
     private void Start()
     {
         instance = this;
-        EventManager.StartListening("AddPlayer", AddPlayer);
-        EventManager.StartListening("StartGame", StartGame);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid(0), AddPlayer);
+        //EventManager.StartListening(System.Guid., AddPlayer);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid(1), StartGame);
     }
 
     public void StartCoroutine()
     {
         StartCoroutine(CreatePlayers());
     }
+
     public IEnumerator CreatePlayers()
     {
-        yield return new WaitUntil(() => SceneManager.GetSceneByBuildIndex(1).isLoaded);
+        yield return new WaitUntil(() => SceneManager.GetSceneByName("Gameplay").isLoaded);
+
         PlayersGameObjects.Add(Instantiate(PlayerPrefab));
         for (int i = 0; i < Players.Count; i++)
         {
@@ -42,12 +46,13 @@ public class NetworkManager : MonoBehaviour
 
     public static void AddPlayer(object player)
     {
-        Players.Add((PlayerData)player);
+        if(!Players.Contains((SyncDataPlayerData)player))
+            Players.Add((SyncDataPlayerData)player);
     }
 
     public static void StartGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(1, LoadSceneMode.Single);
         instance.StartCoroutine(instance.CreatePlayers());
     }
 }

@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MyData;
 
 public class OtherPlayer : MonoBehaviour
 {
     protected GameObject PlayersText;
-    PlayerData playerData;
+    SyncDataPlayerData playerData;
     public List<Sprite> PlayerSprite;
     SpriteRenderer spriteRenderer;
 
@@ -13,18 +14,22 @@ public class OtherPlayer : MonoBehaviour
     public int AnimationLength = 4;
 
     //variables to sync
-    bool IsDead = false;
+    //bool IsDead = false;
     int CurrentFrame = 0;
 
 
-    public void InitialGameObject(PlayerData parameter, List<Sprite> sprites, Material OutlineMat)
+    public void InitialGameObject(SyncDataPlayerData parameter, List<Sprite> sprites, Material OutlineMat)
     {
         playerData = parameter;
         //initialise Listeners
-        EventManager.StartListening("PlayerPos_" + playerData.SteamID.ToString(), SetPosition);
-        EventManager.StartListening("PlayerCurrentFrame_" + playerData.SteamID.ToString(), SetAnimationState);
-        EventManager.StartListening("PlayerXFlip_" + playerData.SteamID.ToString(), SetXFlip);
-        EventManager.StartListening("TimeFrameRateTick", SetFrame);
+        //EventManager.StartListening("PlayerPos_" + playerData.SteamID.ToString(), SetPosition);
+        //EventManager.StartListening("PlayerCurrentFrame_" + playerData.SteamID.ToString(), SetAnimationState);
+        //EventManager.StartListening("PlayerXFlip_" + playerData.SteamID.ToString(), SetXFlip);
+        //EventManager.StartListening("TimeFrameRateTick", SetFrame);
+        EventManager.StartListening(System.Guid.NewGuid(), SetPosition);
+        EventManager.StartListening(System.Guid.NewGuid(), SetAnimationState);
+        EventManager.StartListening(System.Guid.NewGuid(), SetXFlip);
+        EventManager.StartListening(System.Guid.NewGuid(), SetFrame);
 
         spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         PlayerSprite = sprites;
@@ -34,7 +39,7 @@ public class OtherPlayer : MonoBehaviour
         //initialise Player's Names
         PlayersText = new GameObject("PlayersText", typeof(TextMesh));
         PlayersText.transform.parent = transform;
-        PlayersText.transform.position = new Vector3(0, -0.75f);
+        PlayersText.transform.position = new MyData.Vector3(0, -0.75f, 0);
         TextMesh textmesh = PlayersText.GetComponent<TextMesh>();
         textmesh.text = playerData.Name;
         textmesh.anchor = TextAnchor.MiddleCenter;

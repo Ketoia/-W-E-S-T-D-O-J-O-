@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using MyData;
 public class MainMenuManager : MonoBehaviour
 {
     public GUISkin MyGuiSkin;
-    Rect StartPos = new Rect(Screen.width / 2 - 75, Screen.height / 2 - 50, 150, 100);
-    Rect BackPos = new Rect(Screen.width - 90, Screen.height - 40, 80, 50);
+    Rect StartPos = new(Screen.width / 2 - 75, Screen.height / 2 - 50, 150, 100);
+    Rect BackPos = new(Screen.width - 90, Screen.height - 40, 80, 50);
 
     private void OnGUI()
     {
@@ -52,7 +52,7 @@ public class MainMenuManager : MonoBehaviour
         if (GUILayout.Button("HostGame", MyGuiSkin.customStyles[0])) 
         {
             MyMainMenu = MenuState.HostTheGame;
-            SteamManager.instance.HostGame();
+            ServerInstance.instance.HostGame();
 
         }
         if (GUILayout.Button("Connect to SteamID", MyGuiSkin.customStyles[0]))
@@ -72,12 +72,12 @@ public class MainMenuManager : MonoBehaviour
             {
                 if (GUILayout.Button(friend.Name, MyGuiSkin.customStyles[0]))
                 {
-                    SteamManager.instance.ConnectToGame(friend.Id);
+                    ServerInstance.instance.ConnectToGame(friend.Id);
                 }
             }
         }
 
-        if (SteamManager.instance.Connected == true) MyMainMenu = MenuState.ConnectedToHost;
+        if (ServerInstance.instance.Client == true) MyMainMenu = MenuState.ConnectedToHost;
         GUILayout.EndArea();
     }
 
@@ -86,16 +86,15 @@ public class MainMenuManager : MonoBehaviour
         GUILayout.BeginArea(StartPos);
         if (GUILayout.Button("Play", MyGuiSkin.customStyles[0]))
         {
-            if (!SteamManager.instance.Connected)
+            if (!ServerInstance.instance.Client)
             {
-                EventsTransport dataMessage = new ("StartGame");
-                dataMessage.SendEventToClients();
+                //EventsTransport dataMessage = new ("StartGame");
             }
 
             NetworkManager.StartGame();
         }
 
-        List<PlayerData> players = NetworkManager.Players;
+        List<SyncDataPlayerData> players = NetworkManager.Players;
         for (int i = 0; i < players.Count; i++)
         {
             GUILayout.Box(players[i].Name, MyGuiSkin.customStyles[0]);
@@ -108,13 +107,13 @@ public class MainMenuManager : MonoBehaviour
         //test
         GUILayout.Box("wait for play", MyGuiSkin.customStyles[0]);
 
-        List<PlayerData> players = NetworkManager.Players;
+        List<SyncDataPlayerData> players = NetworkManager.Players;
         for (int i = 0; i < players.Count; i++)
         {
             GUILayout.Box(players[i].Name, MyGuiSkin.customStyles[0]);
         }
 
-        if(!SteamManager.instance.Connected) MyMainMenu = MenuState.MainMenu;
+        if(!ServerInstance.instance.Client) MyMainMenu = MenuState.MainMenu;
     }
 
     void Back()
@@ -122,8 +121,8 @@ public class MainMenuManager : MonoBehaviour
         GUILayout.BeginArea(BackPos);
         if(GUILayout.Button("Back", MyGuiSkin.customStyles[0]))
         {
-            if(SteamManager.instance.Connected) SteamManager.instance.connection.Close();
-            if (SteamManager.instance.host) SteamManager.instance.server.Close();
+            if(ServerInstance.instance.Client) ServerInstance.instance.Connection.Close();
+            if (ServerInstance.instance.Host) ServerInstance.instance.Server.Close();
             MyMainMenu = MenuState.MainMenu;
         }
         GUILayout.EndArea();
