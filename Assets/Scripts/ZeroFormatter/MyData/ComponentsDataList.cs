@@ -9,7 +9,7 @@ namespace MyData
     using global::ZeroFormatter.Internal;
     using global::ZeroFormatter.Segments;
 
-    public class ComponentDataListFormatter<TTypeResolver> : Formatter<TTypeResolver, global::MyData.ComponentDataList>
+    public class ComponentsDataListFormatter<TTypeResolver> : Formatter<TTypeResolver, global::MyData.ComponentsDataList>
         where TTypeResolver : ITypeResolver, new()
     {
         public override int? GetLength()
@@ -17,7 +17,7 @@ namespace MyData
             return null;
         }
 
-        public override int Serialize(ref byte[] bytes, int offset, global::MyData.ComponentDataList value)
+        public override int Serialize(ref byte[] bytes, int offset, global::MyData.ComponentsDataList value)
         {
             var segment = value as IZeroFormatterSegment;
             if (segment != null)
@@ -33,17 +33,16 @@ namespace MyData
             {
                 var startOffset = offset;
 
-                offset += (8 + 4 * (3 + 1));
+                offset += (8 + 4 * (2 + 1));
                 offset += ObjectSegmentHelper.SerializeFromFormatter<TTypeResolver, global::System.Guid>(ref bytes, startOffset, offset, 0, value.Key);
                 offset += ObjectSegmentHelper.SerializeFromFormatter<TTypeResolver, string>(ref bytes, startOffset, offset, 1, value.TypeAsString);
-                offset += ObjectSegmentHelper.SerializeFromFormatter<TTypeResolver, global::System.Collections.Generic.List<global::MyData.SyncData>>(ref bytes, startOffset, offset, 2, value.Value);
-                offset += ObjectSegmentHelper.SerializeFromFormatter<TTypeResolver, string>(ref bytes, startOffset, offset, 3, value.ComponentTypeAsString);
+                offset += ObjectSegmentHelper.SerializeFromFormatter<TTypeResolver, global::System.Collections.Generic.List<global::MyData.ComponentsData>>(ref bytes, startOffset, offset, 2, value.Value);
 
-                return ObjectSegmentHelper.WriteSize(ref bytes, startOffset, offset, 3);
+                return ObjectSegmentHelper.WriteSize(ref bytes, startOffset, offset, 2);
             }
         }
 
-        public override global::MyData.ComponentDataList Deserialize(ref byte[] bytes, int offset, global::ZeroFormatter.DirtyTracker tracker, out int byteSize)
+        public override global::MyData.ComponentsDataList Deserialize(ref byte[] bytes, int offset, global::ZeroFormatter.DirtyTracker tracker, out int byteSize)
         {
             byteSize = BinaryUtil.ReadInt32(ref bytes, offset);
             if (byteSize == -1)
@@ -51,14 +50,14 @@ namespace MyData
                 byteSize = 4;
                 return null;
             }
-            return new ComponentDataListObjectSegment<TTypeResolver>(tracker, new ArraySegment<byte>(bytes, offset, byteSize));
+            return new ComponentsDataListObjectSegment<TTypeResolver>(tracker, new ArraySegment<byte>(bytes, offset, byteSize));
         }
     }
 
-    public class ComponentDataListObjectSegment<TTypeResolver> : global::MyData.ComponentDataList, IZeroFormatterSegment
+    public class ComponentsDataListObjectSegment<TTypeResolver> : global::MyData.ComponentsDataList, IZeroFormatterSegment
         where TTypeResolver : ITypeResolver, new()
     {
-        static readonly int[] __elementSizes = new int[]{ 16, 0, 0, 0 };
+        static readonly int[] __elementSizes = new int[]{ 16, 0, 0 };
 
         readonly ArraySegment<byte> __originalBytes;
         readonly global::ZeroFormatter.DirtyTracker __tracker;
@@ -66,8 +65,7 @@ namespace MyData
         readonly byte[] __extraFixedBytes;
 
         CacheSegment<TTypeResolver, string> _TypeAsString;
-        CacheSegment<TTypeResolver, global::System.Collections.Generic.List<global::MyData.SyncData>> _Value;
-        CacheSegment<TTypeResolver, string> _ComponentTypeAsString;
+        CacheSegment<TTypeResolver, global::System.Collections.Generic.List<global::MyData.ComponentsData>> _Value;
 
         // 0
         public override global::System.Guid Key
@@ -96,7 +94,7 @@ namespace MyData
         }
 
         // 2
-        public override global::System.Collections.Generic.List<global::MyData.SyncData> Value
+        public override global::System.Collections.Generic.List<global::MyData.ComponentsData> Value
         {
             get
             {
@@ -108,21 +106,8 @@ namespace MyData
             }
         }
 
-        // 3
-        public override string ComponentTypeAsString
-        {
-            get
-            {
-                return _ComponentTypeAsString.Value;
-            }
-            set
-            {
-                _ComponentTypeAsString.Value = value;
-            }
-        }
 
-
-        public ComponentDataListObjectSegment(global::ZeroFormatter.DirtyTracker dirtyTracker, ArraySegment<byte> originalBytes)
+        public ComponentsDataListObjectSegment(global::ZeroFormatter.DirtyTracker dirtyTracker, ArraySegment<byte> originalBytes)
         {
             var __array = originalBytes.Array;
 
@@ -130,11 +115,10 @@ namespace MyData
             this.__tracker = dirtyTracker = dirtyTracker.CreateChild();
             this.__binaryLastIndex = BinaryUtil.ReadInt32(ref __array, originalBytes.Offset + 4);
 
-            this.__extraFixedBytes = ObjectSegmentHelper.CreateExtraFixedBytes(this.__binaryLastIndex, 3, __elementSizes);
+            this.__extraFixedBytes = ObjectSegmentHelper.CreateExtraFixedBytes(this.__binaryLastIndex, 2, __elementSizes);
 
             _TypeAsString = new CacheSegment<TTypeResolver, string>(__tracker, ObjectSegmentHelper.GetSegment(originalBytes, 1, __binaryLastIndex, __tracker));
-            _Value = new CacheSegment<TTypeResolver, global::System.Collections.Generic.List<global::MyData.SyncData>>(__tracker, ObjectSegmentHelper.GetSegment(originalBytes, 2, __binaryLastIndex, __tracker));
-            _ComponentTypeAsString = new CacheSegment<TTypeResolver, string>(__tracker, ObjectSegmentHelper.GetSegment(originalBytes, 3, __binaryLastIndex, __tracker));
+            _Value = new CacheSegment<TTypeResolver, global::System.Collections.Generic.List<global::MyData.ComponentsData>>(__tracker, ObjectSegmentHelper.GetSegment(originalBytes, 2, __binaryLastIndex, __tracker));
         }
 
         public bool CanDirectCopy()
@@ -152,14 +136,13 @@ namespace MyData
             if (__extraFixedBytes != null || __tracker.IsDirty)
             {
                 var startOffset = offset;
-                offset += (8 + 4 * (3 + 1));
+                offset += (8 + 4 * (2 + 1));
 
                 offset += ObjectSegmentHelper.SerializeFixedLength<TTypeResolver, global::System.Guid>(ref targetBytes, startOffset, offset, 0, __binaryLastIndex, __originalBytes, __extraFixedBytes, __tracker);
                 offset += ObjectSegmentHelper.SerializeCacheSegment<TTypeResolver, string>(ref targetBytes, startOffset, offset, 1, ref _TypeAsString);
-                offset += ObjectSegmentHelper.SerializeCacheSegment<TTypeResolver, global::System.Collections.Generic.List<global::MyData.SyncData>>(ref targetBytes, startOffset, offset, 2, ref _Value);
-                offset += ObjectSegmentHelper.SerializeCacheSegment<TTypeResolver, string>(ref targetBytes, startOffset, offset, 3, ref _ComponentTypeAsString);
+                offset += ObjectSegmentHelper.SerializeCacheSegment<TTypeResolver, global::System.Collections.Generic.List<global::MyData.ComponentsData>>(ref targetBytes, startOffset, offset, 2, ref _Value);
 
-                return ObjectSegmentHelper.WriteSize(ref targetBytes, startOffset, offset, 3);
+                return ObjectSegmentHelper.WriteSize(ref targetBytes, startOffset, offset, 2);
             }
             else
             {

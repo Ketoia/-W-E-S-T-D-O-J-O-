@@ -42,7 +42,8 @@ namespace ZeroFormatter
             ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.SyncDataVector3>.Register(new MyData.SyncDataVector3Formatter<ZeroFormatter.Formatters.DefaultResolver>());
             ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.SyncDataVector3Int>.Register(new MyData.SyncDataVector3IntFormatter<ZeroFormatter.Formatters.DefaultResolver>());
             ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.SyncDataPlayerData>.Register(new MyData.SyncDataPlayerDataFormatter<ZeroFormatter.Formatters.DefaultResolver>());
-            ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.ComponentDataList>.Register(new MyData.ComponentDataListFormatter<ZeroFormatter.Formatters.DefaultResolver>());
+            ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.MyTransportObject>.Register(new MyData.MyTransportObjectFormatter<ZeroFormatter.Formatters.DefaultResolver>());
+            ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.ComponentsDataList>.Register(new MyData.ComponentsDataListFormatter<ZeroFormatter.Formatters.DefaultResolver>());
             // Structs
             {
                 var structFormatter = new MyData.Vector3Formatter<ZeroFormatter.Formatters.DefaultResolver>();
@@ -54,9 +55,16 @@ namespace ZeroFormatter
                 ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.Vector3Int>.Register(structFormatter);
                 ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.Vector3Int?>.Register(new global::ZeroFormatter.Formatters.NullableStructFormatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.Vector3Int>(structFormatter));
             }
+            {
+                var structFormatter = new MyData.ComponentsDataFormatter<ZeroFormatter.Formatters.DefaultResolver>();
+                ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.ComponentsData>.Register(structFormatter);
+                ZeroFormatter.Formatters.Formatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.ComponentsData?>.Register(new global::ZeroFormatter.Formatters.NullableStructFormatter<ZeroFormatter.Formatters.DefaultResolver, global::MyData.ComponentsData>(structFormatter));
+            }
             // Unions
             // Generics
-            ZeroFormatter.Formatters.Formatter.RegisterCollection<ZeroFormatter.Formatters.DefaultResolver, global::MyData.SyncData, global::System.Collections.Generic.List<global::MyData.SyncData>>();
+            ZeroFormatter.Formatters.Formatter.RegisterCollection<ZeroFormatter.Formatters.DefaultResolver, global::MyData.ComponentsData, global::System.Collections.Generic.List<global::MyData.ComponentsData>>();
+            ZeroFormatter.Formatters.Formatter.RegisterCollection<ZeroFormatter.Formatters.DefaultResolver, global::System.Guid, global::System.Collections.Generic.List<global::System.Guid>>();
+            ZeroFormatter.Formatters.Formatter.RegisterCollection<ZeroFormatter.Formatters.DefaultResolver, string, global::System.Collections.Generic.List<string>>();
         }
     }
 }

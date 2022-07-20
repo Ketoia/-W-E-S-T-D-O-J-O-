@@ -6,10 +6,13 @@ using System.Runtime.InteropServices;
 using ZeroFormatter;
 using MyData;
 
+[Serializable]
 public class EventsTransport
 {
+    [SerializeField]
     Guid Key = Guid.Empty;
 
+    [SerializeField]
     private object _Value = new object();
     public object Value
     {
@@ -112,8 +115,8 @@ public class EventsTransport
             case "SyncDataPlayerData":
                 SyncDataPlayerData PlayerData = new SyncDataPlayerData() { Key = Key, Name = ((SyncDataPlayerData)value).Name, SteamID = ((SyncDataPlayerData)value).SteamID, TypeAsString = "SyncDataPlayerData" };
                 return PlayerData;
-            case "CopyComponent":
-                ComponentDataList copyComponent = new ComponentDataList() { Key = Key, TypeAsString = "ComponentDataList", Value = (List<SyncData>)value };
+            case "List`1":
+                ComponentsDataList copyComponent = new ComponentsDataList() { Key = Key, TypeAsString = "List`1", Value = (List<ComponentsData>)value};
                 return copyComponent;
             default:
                 Debug.LogWarning("I dont have this type of data: " + value.GetType().Name);

@@ -72,6 +72,10 @@ public class IMyConnection : IConnectionManager
 				SyncDataPlayerData syncDataPlayerData = ZeroFormatterSerializer.Deserialize<SyncDataPlayerData>(managedArray);
 				EventManager.TriggerEvent(syncDataPlayerData.Key, syncDataPlayerData);
 				break;
+			case "List`1":
+				ComponentsDataList componentsDataList = ZeroFormatterSerializer.Deserialize<ComponentsDataList>(managedArray);
+				EventManager.TriggerEvent(componentsDataList.Key, componentsDataList);
+				break;
 			default:
 				Debug.LogWarning("I dont have this type of data: " + obj.TypeAsString);
 				break;

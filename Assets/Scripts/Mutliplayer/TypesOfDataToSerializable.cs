@@ -167,12 +167,74 @@ namespace MyData
     }
 
     [ZeroFormattable]
-    public class ComponentDataList : SyncData
+    public class ComponentsDataList : SyncData
     {
         [Index(2)]
-        public virtual List<SyncData> Value { get; set; }
-        [Index(3)]
-        public virtual string ComponentTypeAsString { get; set; }
+        public virtual List<ComponentsData> Value { get; set; }
+    }
 
+    [ZeroFormattable]
+    [Serializable]
+    public struct ComponentsData
+    {
+        [Index(0)]
+        public Guid ComponentID { get; set; }
+        [Index(1)]
+        public string TypeAsString { get; set; }
+        [Index(2)]
+        public MyTransportObject MyTransportObjects { get; set; }
+
+        public ComponentsData(Guid id, string typeAsString, MyTransportObject myTransportObjects/*List<Guid> traposrtObjectKeys, List<string> traposrtObjectTypesAsString*/)
+        {
+            ComponentID = id;
+            TypeAsString = typeAsString;
+            MyTransportObjects = myTransportObjects;
+        }
+    }
+
+    [ZeroFormattable]
+    [Serializable]
+    public class MyTransportObject
+    {
+        [Index(0)]
+        public virtual List<Guid> Id { get; set; }
+        [Index(1)]
+        public virtual List<string> TypeAsString { get; set; }
+    }
+
+    public static class MyDataDefaultVariables
+    {
+        public static object GetDefaultVariable(string type)
+        {
+            switch(type)
+            {
+                case "Int32":
+                    return (int)0;
+                    //return default(int);
+                case "Single":
+                    return (float)0.0f;
+                    //return default(float);
+                case "String":
+                    return (string)"";
+                    //return default(string);
+                case "Char":
+                    return (char)0;
+                    //return default(char);
+                case "Boolean":
+                    return (bool)false;
+                    //return default(bool);
+                case "Vector3":
+                    return new Vector3(0, 0, 0);
+                    //return default(Vector3);
+                case "Vector3Int":
+                    return new Vector3Int(0, 0, 0);
+                //return default(Vector3Int);
+                default:
+                    Debug.LogWarning("I dont have this type of data: " + type);
+                    break;
+            }
+            return null;
+        }
     }
 }
+

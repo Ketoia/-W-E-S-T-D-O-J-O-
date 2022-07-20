@@ -5,7 +5,7 @@ using System;
 
 public class NetworkBehaviour : MonoBehaviour
 {
-    public Guid ComponentGuid;
+    public Guid ComponentID;
 
     public MyData.Vector3 Value = new MyData.Vector3(0,0,0);
     public EventsTransport transport;
@@ -16,18 +16,19 @@ public class NetworkBehaviour : MonoBehaviour
     {
         if (isMaster && transport != null)
         {
-            transform.position += Vector3.up * Time.deltaTime;
-            transport.Value = (MyData.Vector3)transform.position;//Value;
+            //transform.position += Vector3.up * Time.deltaTime;
+            //transport.Value = (MyData.Vector3)transform.position;//Value;
         }
     }
 
     private void Start()
     {
+
         if(isMaster && transport == null)
         {
-            transport = new EventsTransport(Value);
+            //transport = new EventsTransport(Value);
 
-            EventsTransport.SoloEventTransport(transport.GetKey().ToString(), 3);
+            //EventsTransport.SoloEventTransport(transport.GetKey().ToString(), 3);
             //EventsTransport.SoloEventTransport("NetworkObject", 4);
 
         }
@@ -35,7 +36,7 @@ public class NetworkBehaviour : MonoBehaviour
 
     public void OnBehaviourAdd(/*string Key*/)
     {
-        isMaster = false;
+        transports.Add(new EventsTransport("123"));
         //transport = new EventsTransport(Guid.Parse(Key));
 
         //EventManager.StartListening(Guid.Parse(Key), OnEventTrigger);

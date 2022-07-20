@@ -67,42 +67,37 @@ public class ServerInstance : MonoBehaviour
 
     public void DuplicateNetGameObject(object Value)
     {
-        GameObject a = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        ComponentsDataList value = (ComponentsDataList)Value;
 
-        NetworkObject netobj = a.AddComponent<NetworkObject>();
-        netobj.ParentGuid = Guid.Parse((string)Value);
+        GameObject NewNetworkedGameObject = new GameObject("Welcome");
+        NetworkObject netobj = NewNetworkedGameObject.AddComponent<NetworkObject>();
+        netobj.ParentGuid = value.Key;
+
+        NetworkObject.AddNetworkedComponent(netobj, value.Value);
 
         NetworkObjects.Add(netobj);
-
-        ComponentDataList comp = new ComponentDataList();
-        comp.Key = netobj.ParentGuid;
-        comp.ComponentTypeAsString = "NetworkBehaviour";
-        comp.Value = new List<SyncData>();
-        comp.Value.Add(new SyncData() { Key = Guid.NewGuid(), TypeAsString = "string" });
-        //comp.Value = new List<SyncData> { }
-        //AddNetworkComponent(comp);
     }
 
     public void AddNetworkComponent(object Value)
     {
-        ComponentDataList value = (ComponentDataList)Value;
-        Type ComponentType = Type.GetType(value.ComponentTypeAsString);
+        //ComponentDataList value = (ComponentDataList)Value;
+        //Type ComponentType = Type.GetType(value.ComponentTypeAsString);
 
-        if (ComponentType == null)
-        {
-            Debug.LogError("There is nothing like: " + (string)Value);
-            return;
-        }
+        //if (ComponentType == null)
+        //{
+        //    Debug.LogError("There is nothing like: " + (string)Value);
+        //    return;
+        //}
 
-        GameObject a = NetworkObjects.Find(e => e.ParentGuid == value.Key).gameObject;// GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        NetworkBehaviour comp = (NetworkBehaviour)a.AddComponent(ComponentType);
-        comp.OnBehaviourAdd();
-        var list = comp.transports;
+        //GameObject a = NetworkObjects.Find(e => e.ParentGuid == value.Key).gameObject;// GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //NetworkBehaviour comp = (NetworkBehaviour)a.AddComponent(ComponentType);
+        //comp.OnBehaviourAdd();
+        //var list = comp.transports;
 
-        foreach (SyncData data in value.Value)
-        {
-            list.Add(new EventsTransport("", data.Key));
-        }
+        //foreach (SyncData data in value.Value)
+        //{
+        //    list.Add(new EventsTransport("", data.Key));
+        //}
     }
     #endregion
 
@@ -196,8 +191,8 @@ public class ServerInstance : MonoBehaviour
                 case "SyncDataPlayerData":
                     bytes = ZeroFormatterSerializer.Serialize((SyncDataPlayerData)syncData);
                     break;
-                case "CopyComponent":
-                    bytes = ZeroFormatterSerializer.Serialize((ComponentDataList)syncData);
+                case "List`1":
+                    bytes = ZeroFormatterSerializer.Serialize((ComponentsDataList)syncData);
                     break;
                 default:
                     Debug.LogWarning("I dont have this type of data: " + syncData.TypeAsString);

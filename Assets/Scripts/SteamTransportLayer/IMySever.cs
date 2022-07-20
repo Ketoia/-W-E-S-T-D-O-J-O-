@@ -98,8 +98,8 @@ public class IMySever : ISocketManager
 				SyncDataVector3Int syncDataVector3Int = ZeroFormatterSerializer.Deserialize<SyncDataVector3Int>(managedArray);
 				EventManager.TriggerEvent(syncDataVector3Int.Key, syncDataVector3Int.Value);
 				break;
-			case "CopyComponent":
-				ComponentDataList copyComponent = ZeroFormatterSerializer.Deserialize<ComponentDataList>(managedArray);
+			case "List`1":
+				ComponentsDataList copyComponent = ZeroFormatterSerializer.Deserialize<ComponentsDataList>(managedArray);
 				EventManager.TriggerEvent(copyComponent.Key, copyComponent.Value);
 				break;
 			default:
