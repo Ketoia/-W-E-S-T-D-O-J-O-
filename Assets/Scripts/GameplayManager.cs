@@ -12,9 +12,12 @@ public class GameplayManager : MonoBehaviour
     public float TimeFrameRate = 1;
     private float dTimeFrame = 0;
 
+    private System.Guid UpdateGuid;
+
     void Awake()
     {
         if (instance == null) instance = this;
+        UpdateGuid = EventsTransport.GenerateSeededGuid(2);
     }
 
     void Update()
@@ -23,7 +26,7 @@ public class GameplayManager : MonoBehaviour
         {
             TimeFrame++;
             dTimeFrame = 0;
-            EventManager.TriggerEvent(System.Guid.NewGuid(), TimeFrame);
+            EventManager.TriggerEvent(UpdateGuid, TimeFrame);
         }
         else
         {

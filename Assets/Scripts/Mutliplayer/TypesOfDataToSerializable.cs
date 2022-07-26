@@ -170,6 +170,8 @@ namespace MyData
     public class ComponentsDataList : SyncData
     {
         [Index(2)]
+        public virtual Guid ParentID { get; set; }
+        [Index(3)]
         public virtual List<ComponentsData> Value { get; set; }
     }
 

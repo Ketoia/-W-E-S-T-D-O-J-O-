@@ -33,17 +33,17 @@ public class Player : MonoBehaviour
 
     void Awake()
     {
-        spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = PlayerSprite[0];
-        spriteRenderer.material = PlayerOutline;
-        rigidbody = gameObject.AddComponent<Rigidbody2D>();
-        rigidbody.gravityScale = 0;
+        //spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+        //spriteRenderer.sprite = PlayerSprite[0];
+        //spriteRenderer.material = PlayerOutline;
+        //rigidbody = gameObject.AddComponent<Rigidbody2D>();
+        //rigidbody.gravityScale = 0;
 
         //PositionEvent = new EventsTransport("PlayerPos_" + Steamworks.SteamClient.SteamId);
         //PlayerCurrentFrame = new EventsTransport("PlayerCurrentFrame_" + Steamworks.SteamClient.SteamId);
         //PlayerAnimationsXFlip = new EventsTransport("PlayerXFlip_" + Steamworks.SteamClient.SteamId);
 
-        EventManager.StartListening(EventsTransport.GenerateSeededGuid(2), UpdateFrame);
+        //EventManager.StartListening(EventsTransport.GenerateSeededGuid(2), UpdateFrame);
     }
 
     private void Update()

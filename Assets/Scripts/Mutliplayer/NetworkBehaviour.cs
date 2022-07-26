@@ -3,49 +3,60 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[RequireComponent(typeof(NetworkObject))]
 public class NetworkBehaviour : MonoBehaviour
 {
     public Guid ComponentID;
 
-    public MyData.Vector3 Value = new MyData.Vector3(0,0,0);
-    public EventsTransport transport;
-    protected bool isMaster = true;
+    protected bool IsMaster = false;
     public List<EventsTransport> transports = new List<EventsTransport>();
-    
-    public void Update()
+
+    protected NetworkObject m_NetworkObject;
+
+    protected virtual void Start()
     {
-        if (isMaster && transport != null)
+        m_NetworkObject = GetComponent<NetworkObject>();
+        if (m_NetworkObject == null) return;
+
+        IsMaster = m_NetworkObject.IsMaster;
+
+        if(IsMaster && m_NetworkObject.IsInSync)
         {
-            //transform.position += Vector3.up * Time.deltaTime;
-            //transport.Value = (MyData.Vector3)transform.position;//Value;
+            Recalculate();
+            m_NetworkObject.AddMyComponent(this);
         }
     }
 
-    private void Start()
+    //protected virtual void Update()
+    //{
+    //    if (IsMaster)
+    //    {
+    //        transports[0].Value = transform.position.ToString();
+    //    }
+    //}
+
+    protected virtual void OnDestroy()
     {
-
-        if(isMaster && transport == null)
-        {
-            //transport = new EventsTransport(Value);
-
-            //EventsTransport.SoloEventTransport(transport.GetKey().ToString(), 3);
-            //EventsTransport.SoloEventTransport("NetworkObject", 4);
-
-        }
+        //EventManager.StopListening(transports[0].GetKey(), OnEventTrigger);
+        m_NetworkObject.DeleteMyComponent(this);
     }
 
-    public void OnBehaviourAdd(/*string Key*/)
+    public virtual void Recalculate()
     {
-        transports.Add(new EventsTransport("123"));
-        //transport = new EventsTransport(Guid.Parse(Key));
+        if (IsMaster) 
+            ComponentID = Guid.NewGuid();
 
-        //EventManager.StartListening(Guid.Parse(Key), OnEventTrigger);
+        //transports.Add(new EventsTransport("123"));
+        //transports.Add(new EventsTransport(123));
+        //transports.Add(new EventsTransport(124.0f));
+        //transports.Add(new EventsTransport(false));
+
+        //EventManager.StartListening(transports[0].GetKey(), OnEventTrigger);
     }
 
-    public void OnEventTrigger(object value)
-    {
-        UnityEngine.Vector3 pos = (MyData.Vector3)value;
-        gameObject.transform.position = pos;
-        //Debug.Log("oh");
-    }
+    //protected void OnEventTrigger(object Value)
+    //{
+    //    string pos = (string)Value;
+    //    Debug.Log(pos);
+    //}
 }

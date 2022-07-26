@@ -89,9 +89,10 @@ public class MainMenuManager : MonoBehaviour
             if (!ServerInstance.instance.Client)
             {
                 //EventsTransport dataMessage = new ("StartGame");
+                EventsTransport.SoloEventTransport(1, 1);
             }
 
-            NetworkManager.StartGame();
+            NetworkManager.StartGame(1);
         }
 
         List<SyncDataPlayerData> players = NetworkManager.Players;

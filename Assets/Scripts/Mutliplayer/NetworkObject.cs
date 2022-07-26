@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,51 +10,98 @@ public class NetworkObject : MonoBehaviour
     public Guid ParentGuid;
     public List<NetworkBehaviour> NetworkBehaviours = new List<NetworkBehaviour>();
 
-    public bool check = false;
+    public bool IsMaster = true;
+    public bool IsInSync = false;
 
-    public void Update()
+    private void Start()
     {
-        if (check)
+        if(IsMaster)
         {
-            if (Input.GetKeyDown(KeyCode.K)) DuplicateOnNetworkObject(this);
-            if (Input.GetKeyDown(KeyCode.J)) AddMyComponent("NetworkBehaviour");
+            ParentGuid = Guid.NewGuid();
+            DuplicateOnNetworkObject();
+        }
+        IsInSync = true;
+    }
+
+    private void OnDestroy()
+    {
+        if (IsMaster)
+            DeleteNetworkObject();
+    }
+
+    private void RecalculateNetworkBehaviours()
+    {
+        NetworkBehaviours.Clear();
+        NetworkBehaviours.AddRange(GetComponents<NetworkBehaviour>());
+
+        foreach(NetworkBehaviour networkBehaviour in NetworkBehaviours)
+        {
+            networkBehaviour.Recalculate();
         }
     }
 
-    public void AddMyComponent(string ComponentName)
+    public void AddMyComponent(NetworkBehaviour component)
     {
-        Type type = Type.GetType(ComponentName);
+        NetworkBehaviours.Add(component);
 
-        if (typeof(NetworkBehaviour) != type) 
+        ComponentsDataList comp = new ComponentsDataList();
+        comp.ParentID = ParentGuid;
+        comp.Value = new List<ComponentsData>();
+
+        ComponentsData componentsData = new ComponentsData();
+        componentsData.TypeAsString = component.GetType().Name;
+        componentsData.ComponentID = component.ComponentID;
+        componentsData.MyTransportObjects = new MyTransportObject();
+        componentsData.MyTransportObjects.Id = new List<Guid>();
+        componentsData.MyTransportObjects.TypeAsString = new List<string>();
+        
+        foreach (var transportitem in component.transports)
         {
-            Debug.LogError("There is nothing like: " + ComponentName);
-            return;
+            componentsData.MyTransportObjects.Id.Add(transportitem.GetKey());
+            componentsData.MyTransportObjects.TypeAsString.Add(transportitem.Value.GetType().Name);
         }
-        NetworkBehaviour netobj = (NetworkBehaviour)gameObject.AddComponent(type);
-        netobj.OnBehaviourAdd();
-        //netobj.OnBehaviourAdd()
-        NetworkBehaviours.Add(netobj);
+        
+        comp.Value.Add(componentsData);
+
+        EventsTransport.SoloEventTransport(comp.Value, 4);
     }
 
-    //public static void DeleteNetworkedComponent(NetworkObject netobj, ComponentsData componentsData)
-    //{
-
-    //}
-
-    public static void AddNetworkedComponent(NetworkObject netobj, ComponentsData componentsData)
+    public void DeleteMyComponent(NetworkBehaviour component)
     {
-        NetworkBehaviour netbehaviour = (NetworkBehaviour)netobj.gameObject.AddComponent(Type.GetType(componentsData.TypeAsString));
-        netbehaviour.transports = new List<EventsTransport>();
+        ComponentsDataList componentsDataList = new ComponentsDataList();
+        componentsDataList.ParentID = ParentGuid;
+        componentsDataList.Value = new List<ComponentsData>();
 
-        //foreach(var item in componentsData.MyTransportObjects)
-        //{
-        //    netbehaviour.transports.Add(new EventsTransport(Activator.CreateInstance(Type.GetType(item.TypeAsString)), item.Id));
-        //}
+        ComponentsData componentsData = new ComponentsData();
+        componentsData.MyTransportObjects = new MyTransportObject();
+        componentsData.ComponentID = component.ComponentID;
+        componentsData.MyTransportObjects.TypeAsString = new List<string>();
+        componentsData.MyTransportObjects.Id = new List<Guid>();
 
-        //for (int i = 0; i < componentsData.TraposrtObjectKeys.Count; i++)
-        //{
-        //    netbehaviour.transports.Add(new EventsTransport(Activator.CreateInstance(Type.GetType(componentsData.TraposrtObjectTypesAsString[i])), componentsData.TraposrtObjectKeys[i]));
-        //}
+        componentsDataList.Value.Add(componentsData);
+
+        EventsTransport.SoloEventTransport(componentsDataList.Value, 5);
+
+        NetworkBehaviours.Remove(component);
+        Destroy(component);
+    }
+
+    #region Main network functions
+
+    public void AddNetworkedComponent(List<ComponentsData> componentsDatas)
+    {
+        foreach (var item in componentsDatas)
+        {
+            NetworkBehaviour netbehaviour = (NetworkBehaviour)gameObject.gameObject.AddComponent(Type.GetType(item.TypeAsString));
+            netbehaviour.transports = new List<EventsTransport>();
+
+            for (int i = 0; i < item.MyTransportObjects.TypeAsString.Count; i++)
+            {
+                netbehaviour.transports.Add(new EventsTransport(MyDataDefaultVariables.GetDefaultVariable(item.MyTransportObjects.TypeAsString[i]), item.MyTransportObjects.Id[i]));
+            }
+            netbehaviour.Recalculate();
+            NetworkBehaviours.Add(netbehaviour);
+        }
     }
 
     public static void AddNetworkedComponent(NetworkObject netobj, List<ComponentsData> componentsDatas)
@@ -62,19 +110,71 @@ public class NetworkObject : MonoBehaviour
         {
             NetworkBehaviour netbehaviour =  (NetworkBehaviour)netobj.gameObject.AddComponent(Type.GetType(item.TypeAsString));
             netbehaviour.transports = new List<EventsTransport>();
+            netbehaviour.ComponentID = item.ComponentID;
 
             for (int i = 0; i < item.MyTransportObjects.TypeAsString.Count; i++)
             {
                 netbehaviour.transports.Add(new EventsTransport(MyDataDefaultVariables.GetDefaultVariable(item.MyTransportObjects.TypeAsString[i]), item.MyTransportObjects.Id[i]));
             }
+            netbehaviour.Recalculate();
+            netobj.NetworkBehaviours.Add(netbehaviour);
         }
+    }
+
+    public void DeleteNetworkedComponent(NetworkBehaviour networkBehaviour)
+    {
+        NetworkBehaviours.Remove(networkBehaviour);
+        Destroy(networkBehaviour);
+    }
+
+    public static void DeleteNetworkedComponent(NetworkObject netobj, List<ComponentsData> componentsDatas)
+    {
+        List<NetworkBehaviour> coponents = netobj.NetworkBehaviours;
+        List<NetworkBehaviour> todeleteComponents = new List<NetworkBehaviour>();
         
+        foreach (var componentDatas in componentsDatas)
+        {
+            todeleteComponents.AddRange(coponents.FindAll(e => e.ComponentID == componentDatas.ComponentID));
+        }
+
+        foreach (var item in todeleteComponents)
+        {
+            netobj.NetworkBehaviours.Remove(item);
+            Destroy(item);
+        }
+    }
+
+    public void DuplicateOnNetworkObject()
+    {
+        ComponentsDataList comp = new ComponentsDataList();
+        comp.ParentID = ParentGuid;
+        comp.Value = new List<ComponentsData>();
+
+        foreach (var item in NetworkBehaviours)
+        {
+            ComponentsData componentsData = new ComponentsData();
+            componentsData.TypeAsString = item.GetType().Name;
+            componentsData.ComponentID = item.ComponentID;
+            componentsData.MyTransportObjects = new MyTransportObject();
+            componentsData.MyTransportObjects.Id = new List<Guid>();
+            componentsData.MyTransportObjects.TypeAsString = new List<string>();
+
+            foreach (var transportitem in item.transports)
+            {
+                componentsData.MyTransportObjects.Id.Add(transportitem.GetKey());
+                componentsData.MyTransportObjects.TypeAsString.Add(transportitem.Value.GetType().Name);
+            }
+
+            comp.Value.Add(componentsData);
+        }
+
+        EventsTransport.SoloEventTransport(comp.Value, 3);
     }
 
     public static void DuplicateOnNetworkObject(NetworkObject netobj)
     {
         ComponentsDataList comp = new ComponentsDataList();
-        comp.Key = netobj.ParentGuid;
+        comp.ParentID = netobj.ParentGuid;
         comp.Value = new List<ComponentsData>();
 
         foreach (var item in netobj.NetworkBehaviours)
@@ -97,4 +197,22 @@ public class NetworkObject : MonoBehaviour
 
         EventsTransport.SoloEventTransport(comp.Value, 3);
     }
+
+    public void DeleteNetworkObject()
+    {
+        ComponentsDataList componentsDataList = new ComponentsDataList();
+        componentsDataList.ParentID = ParentGuid;
+        componentsDataList.Value = new List<ComponentsData>();
+
+        EventsTransport.SoloEventTransport(componentsDataList.Value, 6);
+
+        Destroy(this);
+    }
+    //todo
+    public static void DeleteNetworkObject(NetworkObject netobj)
+    {
+
+    }
+
+    #endregion
 }

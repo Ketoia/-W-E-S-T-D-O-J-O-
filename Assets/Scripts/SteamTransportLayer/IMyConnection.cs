@@ -72,7 +72,7 @@ public class IMyConnection : IConnectionManager
 				SyncDataPlayerData syncDataPlayerData = ZeroFormatterSerializer.Deserialize<SyncDataPlayerData>(managedArray);
 				EventManager.TriggerEvent(syncDataPlayerData.Key, syncDataPlayerData);
 				break;
-			case "List`1":
+			case "ComponentsDataList":
 				ComponentsDataList componentsDataList = ZeroFormatterSerializer.Deserialize<ComponentsDataList>(managedArray);
 				EventManager.TriggerEvent(componentsDataList.Key, componentsDataList);
 				break;

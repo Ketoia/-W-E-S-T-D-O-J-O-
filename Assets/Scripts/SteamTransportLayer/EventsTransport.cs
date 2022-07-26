@@ -65,11 +65,13 @@ public class EventsTransport
     }
 
     /// <summary>
-    /// 0 - Add Player
-    /// 1 - Start Game
-    /// 2 - Update Frame
-    /// 3 - Duplicate NetworkObject
-    /// 4 - AddComponent
+    /// 0 - Add Player,
+    /// 1 - Start Game,
+    /// 2 - Update Frame,
+    /// 3 - Duplicate NetworkObject,
+    /// 4 - Add Component,
+    /// 5 - Delete Component,
+    /// 6 - Delete NetworkObject
     /// </summary>
     /// <param name="value"></param>
     /// <param name="KeySeed"></param>
@@ -116,7 +118,7 @@ public class EventsTransport
                 SyncDataPlayerData PlayerData = new SyncDataPlayerData() { Key = Key, Name = ((SyncDataPlayerData)value).Name, SteamID = ((SyncDataPlayerData)value).SteamID, TypeAsString = "SyncDataPlayerData" };
                 return PlayerData;
             case "List`1":
-                ComponentsDataList copyComponent = new ComponentsDataList() { Key = Key, TypeAsString = "List`1", Value = (List<ComponentsData>)value};
+                ComponentsDataList copyComponent = new ComponentsDataList() { Key = Key, TypeAsString = "ComponentsDataList", Value = (List<ComponentsData>)value};
                 return copyComponent;
             default:
                 Debug.LogWarning("I dont have this type of data: " + value.GetType().Name);

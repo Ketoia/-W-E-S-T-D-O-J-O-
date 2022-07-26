@@ -22,26 +22,20 @@ public class NetworkManager : MonoBehaviour
     {
         instance = this;
         EventManager.StartListening(EventsTransport.GenerateSeededGuid(0), AddPlayer);
-        //EventManager.StartListening(System.Guid., AddPlayer);
         EventManager.StartListening(EventsTransport.GenerateSeededGuid(1), StartGame);
     }
 
-    public void StartCoroutine()
-    {
-        StartCoroutine(CreatePlayers());
-    }
-
-    public IEnumerator CreatePlayers()
+    public IEnumerator CreatePlayers(int SceneIndex)
     {
         yield return new WaitUntil(() => SceneManager.GetSceneByName("Gameplay").isLoaded);
 
         PlayersGameObjects.Add(Instantiate(PlayerPrefab));
-        for (int i = 0; i < Players.Count; i++)
-        {
-            GameObject player = new(Players[i].Name);
-            player.AddComponent<OtherPlayer>().InitialGameObject(Players[i], sprites, OutlineMat);
-            PlayersGameObjects.Add(player);
-        }
+        //for (int i = 0; i < Players.Count; i++)
+        //{
+        //    GameObject player = new(Players[i].Name);
+        //    player.AddComponent<OtherPlayer>().InitialGameObject(Players[i], sprites, OutlineMat);
+        //    PlayersGameObjects.Add(player);
+        //}
     }
 
     public static void AddPlayer(object player)
@@ -50,9 +44,10 @@ public class NetworkManager : MonoBehaviour
             Players.Add((SyncDataPlayerData)player);
     }
 
-    public static void StartGame()
+    public static void StartGame(object SceneIndex)
     {
-        SceneManager.LoadScene(1, LoadSceneMode.Single);
-        instance.StartCoroutine(instance.CreatePlayers());
+        int sceneIndex = (int)SceneIndex;
+        SceneManager.LoadScene(sceneIndex, LoadSceneMode.Single);
+        instance.StartCoroutine(instance.CreatePlayers(sceneIndex));
     }
 }

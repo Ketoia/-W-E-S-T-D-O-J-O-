@@ -22,6 +22,7 @@ public class ServerInstance : MonoBehaviour
     public bool Host = false;
     public bool Client = false;
 
+    [SerializeField]
     private List<NetworkObject> NetworkObjects = new List<NetworkObject>();
 
     protected void Start()
@@ -30,6 +31,8 @@ public class ServerInstance : MonoBehaviour
 
         EventManager.StartListening(EventsTransport.GenerateSeededGuid(3), DuplicateNetGameObject);
         EventManager.StartListening(EventsTransport.GenerateSeededGuid(4), AddNetworkComponent);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid(5), DeleteComponent);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid(6), DeleteNetGameobject);
     }
 
     protected void Update()
@@ -69,35 +72,43 @@ public class ServerInstance : MonoBehaviour
     {
         ComponentsDataList value = (ComponentsDataList)Value;
 
-        GameObject NewNetworkedGameObject = new GameObject("Welcome");
+        GameObject NewNetworkedGameObject = new GameObject("Object" + NetworkObjects.Count.ToString());
         NetworkObject netobj = NewNetworkedGameObject.AddComponent<NetworkObject>();
-        netobj.ParentGuid = value.Key;
+        netobj.ParentGuid = value.ParentID;
+        netobj.IsMaster = false;
 
         NetworkObject.AddNetworkedComponent(netobj, value.Value);
 
         NetworkObjects.Add(netobj);
     }
 
+    public void DeleteNetGameobject(object Value)
+    {
+        ComponentsDataList value = (ComponentsDataList)Value;
+
+        GameObject gameObject = NetworkObjects.Find(e => e.ParentGuid == value.ParentID).gameObject;
+        if (gameObject != null)
+            Destroy(gameObject);
+        else Debug.Log("GameObject not found!");
+    }
+
+    public void DeleteComponent(object Value)
+    {
+        ComponentsDataList value = (ComponentsDataList)Value;
+
+        NetworkObject netobj = NetworkObjects.Find(e => e.ParentGuid == value.ParentID);
+
+        NetworkObject.DeleteNetworkedComponent(netobj, value.Value);
+    }
+
     public void AddNetworkComponent(object Value)
     {
-        //ComponentDataList value = (ComponentDataList)Value;
-        //Type ComponentType = Type.GetType(value.ComponentTypeAsString);
+        ComponentsDataList value = (ComponentsDataList)Value;
 
-        //if (ComponentType == null)
-        //{
-        //    Debug.LogError("There is nothing like: " + (string)Value);
-        //    return;
-        //}
-
-        //GameObject a = NetworkObjects.Find(e => e.ParentGuid == value.Key).gameObject;// GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        //NetworkBehaviour comp = (NetworkBehaviour)a.AddComponent(ComponentType);
-        //comp.OnBehaviourAdd();
-        //var list = comp.transports;
-
-        //foreach (SyncData data in value.Value)
-        //{
-        //    list.Add(new EventsTransport("", data.Key));
-        //}
+        NetworkObject netobj = NetworkObjects.Find(e => e.ParentGuid == value.ParentID);
+        if (netobj != null)
+            NetworkObject.AddNetworkedComponent(netobj, value.Value);
+        else Debug.LogError("Netorked Object not Found!");
     }
     #endregion
 
@@ -127,14 +138,14 @@ public class ServerInstance : MonoBehaviour
     public void AddToDataList(SyncData eventsTrans)
     {
         SyncData tet = DataToSync.Find(e => e.Key == eventsTrans.Key);
-        if (tet == null) DataToSync.Add(eventsTrans);
+        if (tet == null || tet.TypeAsString == "ComponentsDataList") DataToSync.Add(eventsTrans);
         else tet = eventsTrans;
     }
 
     public float tickrate = 0.025f;
     IEnumerator ServerTick()
     {
-        while(Host || Client)
+        while (Host || Client) 
         {
             yield return null;//new WaitForSeconds(tickrate); //tickratio 
 
@@ -191,7 +202,7 @@ public class ServerInstance : MonoBehaviour
                 case "SyncDataPlayerData":
                     bytes = ZeroFormatterSerializer.Serialize((SyncDataPlayerData)syncData);
                     break;
-                case "List`1":
+                case "ComponentsDataList":
                     bytes = ZeroFormatterSerializer.Serialize((ComponentsDataList)syncData);
                     break;
                 default:
