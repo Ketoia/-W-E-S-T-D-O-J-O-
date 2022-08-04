@@ -19,16 +19,14 @@ public class IMyConnection : IConnectionManager
 
 	public void OnConnected(ConnectionInfo data)
 	{
-		ServerInstance.instance.Client = true;
-		//EventsTransport dataMessage = new(SteamManager.instance.MyPlayer, 0, Guid.Empty);
-
+		EventsTransport.SoloEventTransport(SteamManager.instance.MyPlayer, 0);
 		Debug.Log($"{data.Identity.SteamId} has joined the game");
 	}
 
 	public void OnDisconnected(ConnectionInfo data)
 	{
 		ServerInstance.instance.Client = false;
-		//Debug.Log($"{data.Identity.SteamId} is out of here");
+		Debug.Log($"{data.Identity.SteamId} is out of here");
 	}
 
 	public void OnMessage(IntPtr data, int size, long messageNum, long recvTime, int channel)
@@ -81,8 +79,4 @@ public class IMyConnection : IConnectionManager
 				break;
 		}
 	}
-
-	//SyncData<object>.ReciveData(managedArray);
-	// Send it right back
-	//base.OnMessage(data, size, messageNum, recvTime, channel);
 }

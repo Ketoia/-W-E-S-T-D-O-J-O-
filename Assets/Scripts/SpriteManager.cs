@@ -12,9 +12,9 @@ public class SpriteManager : MonoBehaviour
     { 
         public List<Sprite> sprites;
 
-        public MySprite(List<Sprite> sprite)
+        public MySprite(List<Sprite> sprites)
         {
-            this.sprites = sprite;
+            this.sprites = sprites;
         }
     }
 

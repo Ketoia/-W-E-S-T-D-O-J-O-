@@ -19,10 +19,7 @@ public class IMySever : ISocketManager
 	public void OnConnected(Connection connection, ConnectionInfo data)
 	{
 		Debug.Log($"{data.Identity.SteamId} has joined the game");
-
-		//ToDo
-		EventsTransport dataMessage = new(SteamManager.instance.MyPlayer, 0);
-
+		EventsTransport.SoloEventTransport(SteamManager.instance.MyPlayer, 0);
 	}
 
 	public void OnDisconnected(Connection connection, ConnectionInfo data)
@@ -32,7 +29,14 @@ public class IMySever : ISocketManager
 
 	public void OnMessage(Connection connection, NetIdentity identity, IntPtr data, int size, long messageNum, long recvTime, int channel)
 	{
+		//send to other players
+		foreach (var item in ServerInstance.instance.Server.Connected)
+        {
+			if (item != connection)
+				item.SendMessage(data, size);
+        }
 
+		//receive data
 		byte[] managedArray = new byte[size];
 		Marshal.Copy(data, managedArray, 0, size);
 

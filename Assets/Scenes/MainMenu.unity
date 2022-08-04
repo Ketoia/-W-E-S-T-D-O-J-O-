@@ -190,7 +190,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1080574071}
   - component: {fileID: 1080574070}
-  - component: {fileID: 1080574072}
   m_Layer: 0
   m_Name: MainMenuManager
   m_TagString: Untagged
@@ -226,22 +225,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1080574072
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1080574069}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68f6a2762a4dcc84b9a90e11f3d4b1d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Host: 0
-  Client: 0
-  NetworkObjects: []
-  tickrate: 0.025
 --- !u!1 &1709640652
 GameObject:
   m_ObjectHideFlags: 0
