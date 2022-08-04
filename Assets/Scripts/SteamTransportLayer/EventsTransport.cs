@@ -78,7 +78,7 @@ public class EventsTransport
     public static void SoloEventTransport(object value, int KeySeed)
     {
         Guid guid = GenerateSeededGuid(KeySeed);
-        SyncData data = GenerateSyncData(value, guid);
+            SyncData data = GenerateSyncData(value, guid);
         ServerInstance.instance.AddToDataList(data);
     }
 
@@ -117,8 +117,8 @@ public class EventsTransport
             case "SyncDataPlayerData":
                 SyncDataPlayerData PlayerData = new SyncDataPlayerData() { Key = Key, Name = ((SyncDataPlayerData)value).Name, SteamID = ((SyncDataPlayerData)value).SteamID, TypeAsString = "SyncDataPlayerData" };
                 return PlayerData;
-            case "List`1":
-                ComponentsDataList copyComponent = new ComponentsDataList() { Key = Key, TypeAsString = "ComponentsDataList", Value = (List<ComponentsData>)value};
+            case "ComponentsDataList":
+                ComponentsDataList copyComponent = new ComponentsDataList() { Key = Key, ParentID = ((ComponentsDataList)value).ParentID, TypeAsString = "ComponentsDataList", Value = ((ComponentsDataList)value).Value};
                 return copyComponent;
             default:
                 Debug.LogWarning("I dont have this type of data: " + value.GetType().Name);

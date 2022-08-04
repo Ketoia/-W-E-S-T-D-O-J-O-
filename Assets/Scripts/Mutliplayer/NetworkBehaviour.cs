@@ -16,7 +16,11 @@ public class NetworkBehaviour : MonoBehaviour
     protected virtual void Start()
     {
         m_NetworkObject = GetComponent<NetworkObject>();
-        if (m_NetworkObject == null) return;
+        if (m_NetworkObject == null)
+        {
+            Debug.LogError("Network object not Found!");
+            return;
+        }
 
         IsMaster = m_NetworkObject.IsMaster;
 

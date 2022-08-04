@@ -30,12 +30,12 @@ public class NetworkManager : MonoBehaviour
         yield return new WaitUntil(() => SceneManager.GetSceneByName("Gameplay").isLoaded);
 
         PlayersGameObjects.Add(Instantiate(PlayerPrefab));
-        //for (int i = 0; i < Players.Count; i++)
-        //{
-        //    GameObject player = new(Players[i].Name);
-        //    player.AddComponent<OtherPlayer>().InitialGameObject(Players[i], sprites, OutlineMat);
-        //    PlayersGameObjects.Add(player);
-        //}
+        for (int i = 0; i < Players.Count; i++)
+        {
+            GameObject player = new(Players[i].Name);
+            player.AddComponent<OtherPlayer>().InitialGameObject(Players[i], sprites, OutlineMat);
+            PlayersGameObjects.Add(player);
+        }
     }
 
     public static void AddPlayer(object player)

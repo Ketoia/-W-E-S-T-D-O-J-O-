@@ -143,6 +143,7 @@ public class ServerInstance : MonoBehaviour
     }
 
     public float tickrate = 0.025f;
+
     IEnumerator ServerTick()
     {
         while (Host || Client) 
@@ -161,7 +162,9 @@ public class ServerInstance : MonoBehaviour
             }
         }
         isCoroutinerunning = false;
-        Server.Close();
+        
+        //if(Server != null) Server.Close();
+        //if(Connection != null) Connection.Close();
     }
 
     void SendData()
