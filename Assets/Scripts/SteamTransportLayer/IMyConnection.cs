@@ -19,7 +19,7 @@ public class IMyConnection : IConnectionManager
 
 	public void OnConnected(ConnectionInfo data)
 	{
-		EventsTransport.SoloEventTransport(SteamManager.instance.MyPlayer, 0);
+		EventsTransport.SingleEventTransport(SteamManager.instance.MyPlayer, (int)SingleEventsSeed.AddPlayer);
 		Debug.Log($"{data.Identity.SteamId} has joined the game");
 	}
 

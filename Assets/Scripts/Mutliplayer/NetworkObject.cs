@@ -63,7 +63,7 @@ public class NetworkObject : MonoBehaviour
         
         comp.Value.Add(componentsData);
 
-        EventsTransport.SoloEventTransport(comp, 4);
+        EventsTransport.SingleEventTransport(comp, (int)SingleEventsSeed.AddComponent);
     }
 
     public void DeleteMyComponent(NetworkBehaviour component)
@@ -80,7 +80,7 @@ public class NetworkObject : MonoBehaviour
 
         componentsDataList.Value.Add(componentsData);
 
-        EventsTransport.SoloEventTransport(componentsDataList, 5);
+        EventsTransport.SingleEventTransport(componentsDataList, (int)SingleEventsSeed.DeleteComponent);
 
         NetworkBehaviours.Remove(component);
         Destroy(component);
@@ -168,7 +168,7 @@ public class NetworkObject : MonoBehaviour
             comp.Value.Add(componentsData);
         }
 
-        EventsTransport.SoloEventTransport(comp, 3);
+        EventsTransport.SingleEventTransport(comp, (int)SingleEventsSeed.DuplicateNetworkObject);
     }
 
     public static void DuplicateOnNetworkObject(NetworkObject netobj)
@@ -195,7 +195,7 @@ public class NetworkObject : MonoBehaviour
             comp.Value.Add(componentsData);
         }
 
-        EventsTransport.SoloEventTransport(comp, 3);
+        EventsTransport.SingleEventTransport(comp, (int)SingleEventsSeed.DuplicateNetworkObject);
     }
 
     public void DeleteNetworkObject()
@@ -204,7 +204,7 @@ public class NetworkObject : MonoBehaviour
         componentsDataList.ParentID = ParentGuid;
         componentsDataList.Value = new List<ComponentsData>();
 
-        EventsTransport.SoloEventTransport(componentsDataList, 6);
+        EventsTransport.SingleEventTransport(componentsDataList, (int)SingleEventsSeed.DeleteNetworkObject);
 
         Destroy(this);
     }

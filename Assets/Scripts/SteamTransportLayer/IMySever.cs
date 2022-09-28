@@ -19,7 +19,8 @@ public class IMySever : ISocketManager
 	public void OnConnected(Connection connection, ConnectionInfo data)
 	{
 		Debug.Log($"{data.Identity.SteamId} has joined the game");
-		EventsTransport.SoloEventTransport(SteamManager.instance.MyPlayer, 0);
+		
+		EventsTransport.SingleEventTransport(SteamManager.instance.MyPlayer, (int)SingleEventsSeed.AddPlayer);
 	}
 
 	public void OnDisconnected(Connection connection, ConnectionInfo data)

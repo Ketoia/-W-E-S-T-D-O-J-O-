@@ -7,20 +7,15 @@ using System;
 public class NetworkBehaviour : MonoBehaviour
 {
     public Guid ComponentID;
-
-    protected bool IsMaster = false;
     public List<EventsTransport> transports = new List<EventsTransport>();
 
+    protected bool IsMaster = false;
     protected NetworkObject m_NetworkObject;
 
     protected virtual void Start()
     {
         m_NetworkObject = GetComponent<NetworkObject>();
-        if (m_NetworkObject == null)
-        {
-            Debug.LogError("Network object not Found!");
-            return;
-        }
+        if (m_NetworkObject == null) return;
 
         IsMaster = m_NetworkObject.IsMaster;
 
@@ -31,17 +26,8 @@ public class NetworkBehaviour : MonoBehaviour
         }
     }
 
-    //protected virtual void Update()
-    //{
-    //    if (IsMaster)
-    //    {
-    //        transports[0].Value = transform.position.ToString();
-    //    }
-    //}
-
     protected virtual void OnDestroy()
     {
-        //EventManager.StopListening(transports[0].GetKey(), OnEventTrigger);
         m_NetworkObject.DeleteMyComponent(this);
     }
 
@@ -49,18 +35,5 @@ public class NetworkBehaviour : MonoBehaviour
     {
         if (IsMaster) 
             ComponentID = Guid.NewGuid();
-
-        //transports.Add(new EventsTransport("123"));
-        //transports.Add(new EventsTransport(123));
-        //transports.Add(new EventsTransport(124.0f));
-        //transports.Add(new EventsTransport(false));
-
-        //EventManager.StartListening(transports[0].GetKey(), OnEventTrigger);
     }
-
-    //protected void OnEventTrigger(object Value)
-    //{
-    //    string pos = (string)Value;
-    //    Debug.Log(pos);
-    //}
 }

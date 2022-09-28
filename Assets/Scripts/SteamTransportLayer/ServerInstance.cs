@@ -29,10 +29,18 @@ public class ServerInstance : MonoBehaviour
     {
         instance = this;
 
-        EventManager.StartListening(EventsTransport.GenerateSeededGuid(3), DuplicateNetGameObject);
-        EventManager.StartListening(EventsTransport.GenerateSeededGuid(4), AddNetworkComponent);
-        EventManager.StartListening(EventsTransport.GenerateSeededGuid(5), DeleteComponent);
-        EventManager.StartListening(EventsTransport.GenerateSeededGuid(6), DeleteNetGameobject);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.DuplicateNetworkObject), DuplicateNetGameObject);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.AddComponent), AddNetworkComponent);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.DeleteComponent), DeleteComponent);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.DeleteNetworkObject), DeleteNetGameobject);
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.StopListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.DuplicateNetworkObject), DuplicateNetGameObject);
+        EventManager.StopListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.AddComponent), AddNetworkComponent);
+        EventManager.StopListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.DeleteComponent), DeleteComponent);
+        EventManager.StopListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.DeleteNetworkObject), DeleteNetGameobject);
     }
 
     protected void Update()

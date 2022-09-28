@@ -75,7 +75,7 @@ public class EventsTransport
     /// </summary>
     /// <param name="value"></param>
     /// <param name="KeySeed"></param>
-    public static void SoloEventTransport(object value, int KeySeed)
+    public static void SingleEventTransport(object value, int KeySeed)
     {
         Guid guid = GenerateSeededGuid(KeySeed);
             SyncData data = GenerateSyncData(value, guid);
@@ -135,4 +135,15 @@ public class EventsTransport
 
         return new Guid(guid);
     }
+}
+
+public enum SingleEventsSeed
+{
+    AddPlayer,
+    StartGame,
+    UpdateFrame,
+    DuplicateNetworkObject,
+    AddComponent,
+    DeleteComponent,
+    DeleteNetworkObject
 }

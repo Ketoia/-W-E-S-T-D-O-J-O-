@@ -21,8 +21,14 @@ public class NetworkManager : MonoBehaviour
     private void Start()
     {
         instance = this;
-        EventManager.StartListening(EventsTransport.GenerateSeededGuid(0), AddPlayer);
-        EventManager.StartListening(EventsTransport.GenerateSeededGuid(1), StartGame);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.AddPlayer), AddPlayer);
+        EventManager.StartListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.StartGame), StartGame);
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.StopListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.AddPlayer), AddPlayer);
+        EventManager.StopListening(EventsTransport.GenerateSeededGuid((int)SingleEventsSeed.StartGame), StartGame);
     }
 
     public IEnumerator CreatePlayers(int SceneIndex)
