@@ -49,6 +49,13 @@ public class ServerInstance : MonoBehaviour
         {
             ConnectToGame(SteamClient.SteamId);
         }
+
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            string c = new string('1', (int)Mathf.Pow(2,24f) - 50);
+            EventsTransport a = new EventsTransport(Guid.NewGuid());
+            a.Value = c;
+        }
     }
 
     protected void OnEnable()
